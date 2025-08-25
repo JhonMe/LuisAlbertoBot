@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔬 ElementBot</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f3f6fb; margin:0; padding:32px; text-align:center; }
+    h1 { margin-top:0; }
+    button { padding:12px 18px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-size:16px; cursor:pointer; }
+    button:hover { background:#1e40af; }
+    #panel { margin:20px auto; max-width:640px; text-align:left; background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+    .row { margin:6px 0; }
+    .ok { color:#065f46; }
+    .err { color:#9b1c1c; }
+  </style>
+</head>
+<body>
+  <h1>🔬 ElementBot</h1>
+  <p><button id="btn">🎤 Hablar</button></p>
+  <div id="panel">
+    <div class="row"><b>Lo que dijiste:</b> <span id="dicho">—</span></div>
+    <hr>
+    <div id="salida">Aquí aparecerá la respuesta…</div>
+  </div>
+
+  <script>
+    // ======= Diccionario (agrega más cuando quieras) =======
+    // Claves sin tildes y en minúsculas
+    const ELEMENTOS = {
+        "hidrogeno":   { quechua: "Yaku willka", simbolo: "H", numero: 1, masa: "1.008" },
+        "helio":       { quechua: "Ch'isi wayra", simbolo: "He", numero: 2, masa: "4.0026" },
+        "litio":       { quechua: "—", simbolo: "Li", numero: 3, masa: "6.94" },
+        "berilio":     { quechua: "—", simbolo: "Be", numero: 4, masa: "9.0122" },
+        "boro":        { quechua: "—", simbolo: "B", numero: 5, masa: "10.81" },
+        "carbono":     { quechua: "Rumi k'uchi", simbolo: "C", numero: 6, masa: "12.011" },
+        "nitrogeno":   { quechua: "—", simbolo: "N", numero: 7, masa: "14.007" },
+        "oxigeno":     { quechua: "Pukyu samay", simbolo: "O", numero: 8, masa: "15.999" },
+        "fluor":       { quechua: "—", simbolo: "F", numero: 9, masa: "18.998" },
+        "neon":        { quechua: "—", simbolo: "Ne", numero: 10, masa: "20.180" },
+        "sodio":       { quechua: "—", simbolo: "Na", numero: 11, masa: "22.990" },
+        "magnesio":    { quechua: "—", simbolo: "Mg", numero: 12, masa: "24.305" },
+        "aluminio":    { quechua: "—", simbolo: "Al", numero: 13, masa: "26.982" },
+        "silicio":     { quechua: "—", simbolo: "Si", numero: 14, masa: "28.085" },
+        "fosforo":     { quechua: "—", simbolo: "P", numero: 15, masa: "30.974" },
+        "azufre":      { quechua: "K’allpa rumi", simbolo: "S", numero: 16, masa: "32.06" },
+        "cloro":       { quechua: "—", simbolo: "Cl", numero: 17, masa: "35.45" },
+        "argon":       { quechua: "—", simbolo: "Ar", numero: 18, masa: "39.948" },
+        "potasio":     { quechua: "—", simbolo: "K", numero: 19, masa: "39.098" },
+        "calcio":      { quechua: "—", simbolo: "Ca", numero: 20, masa: "40.078" },
+        "hierro":      { quechua: "Q’illay", simbolo: "Fe", numero: 26, masa: "55.845" },
+        "plata":       { quechua: "Qolqe", simbolo: "Ag", numero: 47, masa: "107.868" },
+        "oro":         { quechua: "Quri", simbolo: "Au", numero: 79, masa: "196.967" },
+        "plutonio":    { quechua: "—", simbolo: "Pu", numero: 94, masa: "244" },
+        "oganeson":    { quechua: "—", simbolo: "Og", numero: 118, masa: "294" }
+      };
+
+
+    // Palabras de relleno que podemos ignorar al buscar el elemento
+    const STOPWORDS = new Set(["el","la","los","las","un","una","del","de","al","quiero","saber","sobre","del","elemento","elmento","por","favor","dime","di"]);
+
+    // ======= Estado de diálogo =======
+    let modo = "preguntarElemento"; // "preguntarElemento" | "confirmarOtro"
+    const dichoEl = document.getElementById("dicho");
+    const salidaEl = document.getElementById("salida");
+    const btn = document.getElementById("btn");
+
+    // ======= Utilidades =======
+    function normalizar(txt) {
+      // minúsculas, sin tildes, sin puntuación, espacios simples
+      return txt
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // quita tildes
+        .replace(/[.,;:!?¿¡()"']/g, ' ')                    // quita puntuación
+        .replace(/\s+/g, ' ')                                // espacios múltiples -> 1
+        .trim();
+    }
+
+    function limpiarStopwords(frase) {
+      const palabras = frase.split(' ').filter(w => !STOPWORDS.has(w));
+      return palabras.join(' ').trim();
+    }
+
+    function hablar(texto, lang="es-PE") {
+      const u = new SpeechSynthesisUtterance(texto);
+      u.lang = lang; // navegadores suelen mapear a una voz es-*
+      speechSynthesis.cancel(); // evita superposición
+      speechSynthesis.speak(u);
+      return new Promise(res => { u.onend = res; });
+    }
+
+    function tieneAPI() {
+      return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    }
+
+    function crearRecon() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const r = new SR();
+      r.lang = "es-PE"; // español Perú
+      r.interimResults = false;
+      r.maxAlternatives = 1;
+      return r;
+    }
+
+    // ======= Lógica principal =======
+    async function bienvenida() {
+      await hablar("Hola Albertino, ¿qué elemento de la tabla periódica quieres saber?");
+      escucharElemento();
+    }
+
+    function escucharElemento() {
+      modo = "preguntarElemento";
+      const rec = crearRecon();
+      rec.onresult = (e) => {
+        const original = e.results[0][0].transcript;
+        dichoEl.textContent = original;
+        const limpio = limpiarStopwords(normalizar(original));
+
+        const encontrado = buscarElemento(limpio);
+        if (encontrado) {
+          mostrarElemento(encontrado.clave, encontrado.data);
+        } else {
+          salidaEl.innerHTML = `<div class="err">❌ No encontré el elemento: <b>${original}</b></div>`;
+          hablar(`No encontré el elemento ${original}. Dime otro, por favor.`).then(() => {
+            escucharElemento();
+          });
+        }
+      };
+      rec.onerror = () => {
+        hablar("No te entendí. Inténtalo de nuevo.").then(() => escucharElemento());
+      };
+      rec.start();
+    }
+
+    function buscarElemento(fraseLimpia) {
+      // Coincidencia exacta
+      if (ELEMENTOS[fraseLimpia]) return { clave: fraseLimpia, data: ELEMENTOS[fraseLimpia] };
+
+      // Coincidencia por palabra: si la frase contiene la clave con límites de palabra
+      for (const clave of Object.keys(ELEMENTOS)) {
+        const re = new RegExp(`\\b${clave}\\b`, 'i');
+        if (re.test(fraseLimpia)) return { clave, data: ELEMENTOS[clave] };
+      }
+      return null;
+    }
+
+    function mostrarElemento(clave, el) {
+      // Hablar solo el nombre en quechua
+      hablar(el.quechua).then(() => {
+        salidaEl.innerHTML = `
+          <div class="ok">
+            <div class="row"><b>Elemento:</b> ${capitalizar(clave)}</div>
+            <div class="row"><b>Nombre en quechua:</b> ${el.quechua}</div>
+            <div class="row"><b>Símbolo:</b> ${el.simbolo}</div>
+            <div class="row"><b>Número atómico:</b> ${el.numero}</div>
+            <div class="row"><b>Masa atómica:</b> ${el.masa || "—"}</div>
+          </div>
+        `;
+        // Preguntar si quiere otro
+        modo = "confirmarOtro";
+        hablar("¿Quieres saber otro elemento de la tabla periódica? Responde sí o no.")
+          .then(() => escucharConfirmacion());
+      });
+    }
+
+    function escucharConfirmacion() {
+      const rec = crearRecon();
+      rec.onresult = (e) => {
+        const resp = normalizar(e.results[0][0].transcript);
+        dichoEl.textContent = e.results[0][0].transcript;
+
+        if (/\bno\b/.test(resp)) {
+          hablar("Tupananchiskama").then(()=> {
+            salidaEl.innerHTML += `<div class="row">👋 Hasta luego en quechua: <b>Tupananchiskama</b></div>`;
+          });
+        } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp)) {
+          hablar("Dime el elemento.").then(()=> escucharElemento());
+        } else {
+          hablar("No entendí. Por favor responde sí o no.").then(()=> escucharConfirmacion());
+        }
+      };
+      rec.onerror = () => {
+        hablar("No te entendí. ¿Quieres otro? di sí o no.").then(()=> escucharConfirmacion());
+      };
+      rec.start();
+    }
+
+    function capitalizar(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    // Botón manual para iniciar (necesario en algunos navegadores por permisos)
+    btn.addEventListener('click', async () => {
+      // Pide permiso al micrófono explícitamente (ayuda a que salga el popup)
+      if (navigator.mediaDevices?.getUserMedia) {
+        try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch {}
+      }
+      bienvenida();
+    });
+
+    // Mensaje visual inicial
+    salidaEl.textContent = "Presiona “Hablar”, permite el micrófono y di, por ejemplo: oro, plata, carbono…";
+  </script>
+</body>
+</html>

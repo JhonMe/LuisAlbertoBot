@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>🔬 ElementBot</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f3f6fb; margin:0; padding:32px; text-align:center; }
+        h1 { margin-top:0; }
+        button { padding:12px 18px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-size:16px; cursor:pointer; }
+        button:hover { background:#1e40af; }
+        #panel { margin:20px auto; max-width:640px; text-align:left; background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+        .row { margin:6px 0; }
+        .ok { color:#065f46; }
+        .err { color:#9b1c1c; }
+
+        /* Estilos de la cara animada */
+        #cara-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto; /* Centrar la cara */
+        }
+        .cara {
+            width: 200px;
+            height: 200px;
+            background-color: #ffda63;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .ojo {
+            width: 30px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50px;
+            border: 2px solid black;
+            overflow: hidden;
+        }
+        .ojo.izquierdo { left: 40px; }
+        .ojo.derecho { right: 40px; }
+        .pupila {
+            width: 10px;
+            height: 10px;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Animación de parpadeo (opcional) */
+            animation: parpadeo 4s infinite;
+        }
+        @keyframes parpadeo {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+
+        .boca {
+            width: 80px;
+            height: 30px;
+            background-color: #e74c3c;
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.2s ease-in-out; /* Transición suave para la animación */
+        }
+
+        .boca.hablando {
+            height: 50px;
+            border-radius: 0 0 100% 100%;
+        }
+
+        .boca.hablando .lengua {
+            width: 40px;
+            height: 20px;
+            background-color: #ff6f61;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Estilos para el texto flotante sobre la cara */
+        #texto-flotante {
+            position: absolute;
+            top: -20px;
+            width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 14px;
+            text-align: left;
+            opacity: 0; /* Oculto por defecto */
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #texto-flotante.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <h1>🔬 ElementBot</h1>
+
+    <div id="cara-container">
+        <div id="texto-flotante"></div>
+        <div class="cara">
+            <div class="ojo izquierdo"><div class="pupila"></div></div>
+            <div class="ojo derecho"><div class="pupila"></div></div>
+            <div class="boca"></div>
+        </div>
+    </div>
+
+    <p><button id="btn">🎤 Hablar</button></p>
+    <div id="panel">
+        <div class="row"><b>Lo que dijiste:</b> <span id="dicho">—</span></div>
+        <hr>
+        <div id="salida">Aquí aparecerá la respuesta…</div>
+    </div>
+
+    <script>
+        // ======= Diccionario (agrega más cuando quieras) =======
+        const ELEMENTOS = {
+            "hidrogeno":   { quechua: "Yaku willka", simbolo: "H", numero: 1, masa: "1.008" },
+            "helio":       { quechua: "Ch'isi wayra", simbolo: "He", numero: 2, masa: "4.0026" },
+            "litio":       { quechua: "—", simbolo: "Li", numero: 3, masa: "6.94" },
+            "berilio":     { quechua: "—", simbolo: "Be", numero: 4, masa: "9.0122" },
+            "boro":        { quechua: "—", simbolo: "B", numero: 5, masa: "10.81" },
+            "carbono":     { quechua: "Rumi k'uchi", simbolo: "C", numero: 6, masa: "12.011" },
+            "nitrogeno":   { quechua: "—", simbolo: "N", numero: 7, masa: "14.007" },
+            "oxigeno":     { quechua: "Pukyu samay", simbolo: "O", numero: 8, masa: "15.999" },
+            "fluor":       { quechua: "—", simbolo: "F", numero: 9, masa: "18.998" },
+            "neon":        { quechua: "—", simbolo: "Ne", numero: 10, masa: "20.180" },
+            "sodio":       { quechua: "—", simbolo: "Na", numero: 11, masa: "22.990" },
+            "magnesio":    { quechua: "—", simbolo: "Mg", numero: 12, masa: "24.305" },
+            "aluminio":    { quechua: "—", simbolo: "Al", numero: 13, masa: "26.982" },
+            "silicio":     { quechua: "—", simbolo: "Si", numero: 14, masa: "28.085" },
+            "fosforo":     { quechua: "—", simbolo: "P", numero: 15, masa: "30.974" },
+            "azufre":      { quechua: "K’allpa rumi", simbolo: "S", numero: 16, masa: "32.06" },
+            "cloro":       { quechua: "—", simbolo: "Cl", numero: 17, masa: "35.45" },
+            "argon":       { quechua: "—", simbolo: "Ar", numero: 18, masa: "39.948" },
+            "potasio":     { quechua: "—", simbolo: "K", numero: 19, masa: "39.098" },
+            "calcio":      { quechua: "—", simbolo: "Ca", numero: 20, masa: "40.078" },
+            "hierro":      { quechua: "Q’illay", simbolo: "Fe", numero: 26, masa: "55.845" },
+            "plata":       { quechua: "Qolqe", simbolo: "Ag", numero: 47, masa: "107.868" },
+            "oro":         { quechua: "Quri", simbolo: "Au", numero: 79, masa: "196.967" },
+            "plutonio":    { quechua: "—", simbolo: "Pu", numero: 94, masa: "244" },
+            "oganeson":    { quechua: "—", simbolo: "Og", numero: 118, masa: "294" }
+        };
+
+        const STOPWORDS = new Set(["el","la","los","las","un","una","del","de","al","quiero","saber","sobre","del","elemento","elmento","por","favor","dime","di"]);
+
+        let modo = "preguntarElemento";
+        const dichoEl = document.getElementById("dicho");
+        const salidaEl = document.getElementById("salida");
+        const btn = document.getElementById("btn");
+
+        // 🔸 NUEVO: Referencias a los elementos de la cara y el texto flotante
+        const boca = document.querySelector('.boca');
+        const textoFlotante = document.getElementById('texto-flotante');
+
+        let sesionActiva = false;
+        let wakeRec = null;
+
+        function normalizar(txt) {
+            return txt
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[.,;:!?¿¡()"']/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function limpiarStopwords(frase) {
+            const palabras = frase.split(' ').filter(w => !STOPWORDS.has(w));
+            return palabras.join(' ').trim();
+        }
+
+        // 🔸 FUNCIÓN MODIFICADA: Ahora controla la animación de la boca
+        async function hablar(texto, lang="es-PE") {
+            const u = new SpeechSynthesisUtterance(texto);
+            u.lang = lang;
+            speechSynthesis.cancel();
+            
+            // Abrir la boca
+            boca.classList.add('hablando');
+            boca.innerHTML = '<div class="lengua"></div>';
+
+            speechSynthesis.speak(u);
+            return new Promise(res => {
+                u.onend = () => {
+                    // Cerrar la boca al terminar
+                    boca.classList.remove('hablando');
+                    boca.innerHTML = '';
+                    res();
+                };
+            });
+        }
+
+        function tieneAPI() {
+            return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        }
+
+        function crearRecon() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const r = new SR();
+            r.lang = "es-PE";
+            r.interimResults = false;
+            r.maxAlternatives = 1;
+
+            // 🔸 NUEVO: Cerrar la boca mientras se escucha
+            r.onstart = () => {
+                boca.classList.remove('hablando');
+                boca.innerHTML = '';
+            };
+
+            return r;
+        }
+
+        async function bienvenida() {
+            await hablar("Hola Albertino, ¿qué elemento de la tabla periódica quieres saber?");
+            escucharElemento();
+        }
+
+        function escucharElemento() {
+            if (wakeRec) { try { wakeRec.stop(); } catch(e){} }
+            sesionActiva = true;
+
+            modo = "preguntarElemento";
+            const rec = crearRecon();
+            rec.onresult = (e) => {
+                const original = e.results[0][0].transcript;
+                dichoEl.textContent = original;
+                // 🔸 MOSTRAR TEXTO EN LA CARA
+                mostrarTextoFlotante(original);
+
+                const limpio = limpiarStopwords(normalizar(original));
+                const encontrado = buscarElemento(limpio);
+                
+                if (encontrado) {
+                    mostrarElemento(encontrado.clave, encontrado.data);
+                } else {
+                    salidaEl.innerHTML = `<div class="err">❌ No encontré el elemento: <b>${original}</b></div>`;
+                    hablar(`No encontré el elemento ${original}. Dime otro, por favor.`).then(() => {
+                        escucharElemento();
+                    });
+                }
+            };
+            rec.onerror = () => {
+                hablar("No te entendí. Inténtalo de nuevo.").then(() => escucharElemento());
+            };
+            rec.start();
+        }
+
+        function buscarElemento(fraseLimpia) {
+            if (ELEMENTOS[fraseLimpia]) return { clave: fraseLimpia, data: ELEMENTOS[fraseLimpia] };
+            for (const clave of Object.keys(ELEMENTOS)) {
+                const re = new RegExp(`\\b${clave}\\b`, 'i');
+                if (re.test(fraseLimpia)) return { clave, data: ELEMENTOS[clave] };
+            }
+            return null;
+        }
+
+        function mostrarElemento(clave, el) {
+            hablar(el.quechua).then(() => {
+                salidaEl.innerHTML = `
+                    <div class="ok">
+                        <div class="row"><b>Elemento:</b> ${capitalizar(clave)}</div>
+                        <div class="row"><b>Nombre en quechua:</b> ${el.quechua}</div>
+                        <div class="row"><b>Símbolo:</b> ${el.simbolo}</div>
+                        <div class="row"><b>Número atómico:</b> ${el.numero}</div>
+                        <div class="row"><b>Masa atómica:</b> ${el.masa || "—"}</div>
+                    </div>
+                `;
+                modo = "confirmarOtro";
+                hablar("¿Quieres saber otro elemento de la tabla periódica? Responde sí o no.")
+                    .then(() => escucharConfirmacion());
+            });
+        }
+
+        function escucharConfirmacion() {
+            const rec = crearRecon();
+            rec.onresult = (e) => {
+                const resp = normalizar(e.results[0][0].transcript);
+                dichoEl.textContent = e.results[0][0].transcript;
+                // 🔸 MOSTRAR TEXTO EN LA CARA
+                mostrarTextoFlotante(e.results[0][0].transcript);
+
+                if (/\bno\b/.test(resp)) {
+                    hablar("Tupananchiskama").then(()=> {
+                        salidaEl.innerHTML += `<div class="row">👋 Hasta luego en quechua: <b>Tupananchiskama</b></div>`;
+                        sesionActiva = false;
+                        reactivarWakeWord();
+                        // 🔸 OCULTAR TEXTO
+                        setTimeout(ocultarTextoFlotante, 1000);
+                    });
+                } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp)) {
+                    hablar("Dime el elemento.").then(()=> escucharElemento());
+                } else {
+                    hablar("No entendí. Por favor responde sí o no.").then(()=> escucharConfirmacion());
+                }
+            };
+            rec.onerror = () => {
+                hablar("No te entendí. ¿Quieres otro? di sí o no.").then(()=> escucharConfirmacion());
+            };
+            rec.start();
+        }
+
+        function capitalizar(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        // 🔸 FUNCIONES NUEVAS PARA LA CARA
+        function mostrarTextoFlotante(texto) {
+            textoFlotante.textContent = texto;
+            textoFlotante.classList.add('visible');
+        }
+
+        function ocultarTextoFlotante() {
+            textoFlotante.classList.remove('visible');
+        }
+
+        function iniciarWakeWord() {
+            if (!tieneAPI()) return;
+            if (wakeRec) return;
+
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            wakeRec = new SR();
+            wakeRec.lang = "es-PE";
+            wakeRec.interimResults = false;
+            wakeRec.continuous = true;
+
+            // 🔸 NUEVO: Cerrar la boca mientras está escuchando el wake-word
+            wakeRec.onstart = () => {
+                boca.classList.remove('hablando');
+                boca.innerHTML = '';
+            };
+
+            wakeRec.onresult = (e) => {
+                const i = e.results.length - 1;
+                const original = e.results[i][0].transcript;
+                const tx = normalizar(original);
+                
+                if (!sesionActiva && /\bluis\s+alberto\b/.test(tx)) {
+                    sesionActiva = true;
+                    try { wakeRec.stop(); } catch(e){}
+                    bienvenida();
+                }
+            };
+            wakeRec.onend = () => {
+                if (!sesionActiva) {
+                    setTimeout(() => {
+                        try { wakeRec.start(); } catch(e){}
+                    }, 300);
+                }
+            };
+
+            if (navigator.mediaDevices?.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(() => { try { wakeRec.start(); } catch(e){} })
+                    .catch(() => {
+                        salidaEl.innerHTML = `🔇 Activa el micrófono para usar "Luis Alberto" como palabra clave.`;
+                    });
+            } else {
+                try { wakeRec.start(); } catch(e){}
+            }
+        }
+
+        function reactivarWakeWord() {
+            if (wakeRec && !sesionActiva) {
+                try { wakeRec.start(); } catch(e){}
+            }
+        }
+
+        btn.addEventListener('click', async () => {
+            if (navigator.mediaDevices?.getUserMedia) {
+                try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch {}
+            }
+            if (wakeRec) { try { wakeRec.stop(); } catch(e){} }
+            sesionActiva = true;
+            bienvenida();
+        });
+
+        salidaEl.textContent = "Presiona “Hablar”, permite el micrófono o di “Luis Alberto” para activar. Luego di: oro, plata, carbono…";
+        document.addEventListener('DOMContentLoaded', iniciarWakeWord);
+
+    </script>
+</body>
+</html>

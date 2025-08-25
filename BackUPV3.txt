@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>🔬 ElementBot</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 32px;
+            text-align: center;
+        }
+        h1 { margin-top:0; }
+        button { padding:12px 18px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-size:16px; cursor:pointer; }
+        button:hover { background:#1e40af; }
+        #panel { margin:20px auto; max-width:640px; text-align:left; background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+        .row { margin:6px 0; }
+        .ok { color:#065f46; }
+        .err { color:#9b1c1c; }
+
+        /* Estilos de la cara mejorada */
+        #cara-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+        }
+        .cara {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #fdd835);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Cejas */
+        .ceja {
+            position: absolute;
+            width: 40px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            top: 60px;
+            transition: all 0.3s ease;
+        }
+        .ceja.izquierda { 
+            left: 60px; 
+            transform: rotate(-15deg);
+        }
+        .ceja.derecha { 
+            right: 60px; 
+            transform: rotate(15deg);
+        }
+        .cara.escuchando .ceja.izquierda {
+            transform: rotate(-25deg) translateY(-5px);
+        }
+        .cara.escuchando .ceja.derecha {
+            transform: rotate(25deg) translateY(-5px);
+        }
+
+        /* Ojos */
+        .ojo {
+            width: 35px;
+            height: 35px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 80px;
+            border: 3px solid #333;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .ojo.izquierdo { left: 65px; }
+        .ojo.derecho { right: 65px; }
+        
+        .pupila {
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        /* Estados de los ojos */
+        .cara.hablando .ojo {
+            transform: scaleY(0.8);
+        }
+        .cara.escuchando .ojo {
+            transform: scaleY(1.1);
+        }
+        .cara.escuchando .pupila {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        /* Boca - Estado normal/escuchando */
+        .boca {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease;
+        }
+
+        .boca.sonriendo {
+            width: 80px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: none;
+            border-radius: 0 0 80px 80px;
+            background: #ff4444;
+        }
+
+        .boca.hablando {
+            width: 50px;
+            height: 60px;
+            background: #333;
+            border-radius: 50%;
+            animation: hablar 0.3s infinite alternate;
+        }
+
+        @keyframes hablar {
+            0% { transform: translateX(-50%) scaleY(1); }
+            100% { transform: translateX(-50%) scaleY(1.2); }
+        }
+
+        /* Globo de información estilo nube */
+        #globo-info {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 280px;
+            background: white;
+            border-radius: 20px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            font-size: 14px;
+            text-align: left;
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10;
+            border: 2px solid #e0e0e0;
+        }
+
+        /* Efecto nube para el globo */
+        #globo-info::before,
+        #globo-info::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+        }
+        
+        #globo-info::before {
+            width: 20px;
+            height: 20px;
+            bottom: -12px;
+            left: 30px;
+        }
+        
+        #globo-info::after {
+            width: 15px;
+            height: 15px;
+            bottom: -18px;
+            left: 50px;
+        }
+
+        #globo-info.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .info-row { 
+            margin: 8px 0; 
+            display: flex;
+            align-items: center;
+        }
+        .info-title { 
+            font-weight: bold; 
+            color: #2563eb;
+            min-width: 120px;
+            margin-right: 8px;
+        }
+        .info-value {
+            color: #1f2937;
+            flex: 1;
+        }
+        .info-ok { color:#065f46; }
+        .info-err { color:#dc2626; }
+
+        /* Animación de parpadeo sutil */
+        @keyframes parpadeo-sutil {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        .cara:not(.hablando) .ojo {
+            animation: parpadeo-sutil 4s infinite;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔬 ElementBot</h1>
+
+    <div id="cara-container">
+        <div id="globo-info"></div>
+        <div class="cara">
+            <div class="ceja izquierda"></div>
+            <div class="ceja derecha"></div>
+            <div class="ojo izquierdo"><div class="pupila"></div></div>
+            <div class="ojo derecho"><div class="pupila"></div></div>
+            <div class="boca sonriendo"></div>
+        </div>
+    </div>
+
+    <p><button id="btn">🎤 Hablar</button></p>
+    <div id="panel">
+        <div class="row"><b>Lo que dijiste:</b> <span id="dicho">—</span></div>
+        <hr>
+        <div id="salida">Aquí aparecerá la respuesta…</div>
+    </div>
+
+    <script>
+        const ELEMENTOS = {
+            "hidrogeno":   { quechua: "Yaku willka", simbolo: "H", numero: 1, masa: "1.008" },
+            "helio":       { quechua: "Ch'isi wayra", simbolo: "He", numero: 2, masa: "4.0026" },
+            "litio":       { quechua: "—", simbolo: "Li", numero: 3, masa: "6.94" },
+            "berilio":     { quechua: "—", simbolo: "Be", numero: 4, masa: "9.0122" },
+            "boro":        { quechua: "—", simbolo: "B", numero: 5, masa: "10.81" },
+            "carbono":     { quechua: "Rumi k'uchi", simbolo: "C", numero: 6, masa: "12.011" },
+            "nitrogeno":   { quechua: "—", simbolo: "N", numero: 7, masa: "14.007" },
+            "oxigeno":     { quechua: "Pukyu samay", simbolo: "O", numero: 8, masa: "15.999" },
+            "fluor":       { quechua: "—", simbolo: "F", numero: 9, masa: "18.998" },
+            "neon":        { quechua: "—", simbolo: "Ne", numero: 10, masa: "20.180" },
+            "sodio":       { quechua: "—", simbolo: "Na", numero: 11, masa: "22.990" },
+            "magnesio":    { quechua: "—", simbolo: "Mg", numero: 12, masa: "24.305" },
+            "aluminio":    { quechua: "—", simbolo: "Al", numero: 13, masa: "26.982" },
+            "silicio":     { quechua: "—", simbolo: "Si", numero: 14, masa: "28.085" },
+            "fosforo":     { quechua: "—", simbolo: "P", numero: 15, masa: "30.974" },
+            "azufre":      { quechua: "K'allpa rumi", simbolo: "S", numero: 16, masa: "32.06" },
+            "cloro":       { quechua: "—", simbolo: "Cl", numero: 17, masa: "35.45" },
+            "argon":       { quechua: "—", simbolo: "Ar", numero: 18, masa: "39.948" },
+            "potasio":     { quechua: "—", simbolo: "K", numero: 19, masa: "39.098" },
+            "calcio":      { quechua: "—", simbolo: "Ca", numero: 20, masa: "40.078" },
+            "hierro":      { quechua: "Q'illay", simbolo: "Fe", numero: 26, masa: "55.845" },
+            "plata":       { quechua: "Qolqe", simbolo: "Ag", numero: 47, masa: "107.868" },
+            "oro":         { quechua: "Quri", simbolo: "Au", numero: 79, masa: "196.967" },
+            "plutonio":    { quechua: "—", simbolo: "Pu", numero: 94, masa: "244" },
+            "oganeson":    { quechua: "—", simbolo: "Og", numero: 118, masa: "294" }
+        };
+
+        const STOPWORDS = new Set(["el","la","los","las","un","una","del","de","al","quiero","saber","sobre","del","elemento","elmento","por","favor","dime","di"]);
+
+        let modo = "preguntarElemento";
+        const dichoEl = document.getElementById("dicho");
+        const salidaEl = document.getElementById("salida");
+        const btn = document.getElementById("btn");
+
+        const cara = document.querySelector('.cara');
+        const boca = document.querySelector('.boca');
+        const globoInfo = document.getElementById('globo-info');
+
+        let sesionActiva = false;
+        let wakeRec = null;
+
+        function normalizar(txt) {
+            return txt
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[.,;:!?¿¡()"']/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function limpiarStopwords(frase) {
+            const palabras = frase.split(' ').filter(w => !STOPWORDS.has(w));
+            return palabras.join(' ').trim();
+        }
+
+        async function hablar(texto, lang="es-PE") {
+            const u = new SpeechSynthesisUtterance(texto);
+            u.lang = lang;
+            speechSynthesis.cancel();
+            
+            // Cambiar a estado hablando
+            cara.classList.remove('escuchando');
+            cara.classList.add('hablando');
+            boca.classList.remove('sonriendo');
+            boca.classList.add('hablando');
+
+            speechSynthesis.speak(u);
+            return new Promise(res => {
+                u.onend = () => {
+                    // Volver a estado normal
+                    cara.classList.remove('hablando');
+                    boca.classList.remove('hablando');
+                    boca.classList.add('sonriendo');
+                    res();
+                };
+            });
+        }
+
+        function estadoEscuchando() {
+            cara.classList.remove('hablando');
+            cara.classList.add('escuchando');
+            boca.classList.remove('hablando');
+            boca.classList.add('sonriendo');
+        }
+
+        function estadoNormal() {
+            cara.classList.remove('hablando', 'escuchando');
+            boca.classList.remove('hablando');
+            boca.classList.add('sonriendo');
+        }
+
+        function tieneAPI() {
+            return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        }
+
+        function crearRecon() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const r = new SR();
+            r.lang = "es-PE";
+            r.interimResults = false;
+            r.maxAlternatives = 1;
+
+            r.onstart = () => {
+                estadoEscuchando();
+                ocultarGloboInfo();
+            };
+
+            return r;
+        }
+
+        async function bienvenida() {
+            await hablar("Hola Albertino, ¿qué elemento de la tabla periódica quieres saber?");
+            escucharElemento();
+        }
+
+        function escucharElemento() {
+            if (wakeRec) { try { wakeRec.stop(); } catch(e){} }
+            sesionActiva = true;
+
+            modo = "preguntarElemento";
+            const rec = crearRecon();
+            rec.onresult = (e) => {
+                estadoNormal();
+                const original = e.results[0][0].transcript;
+                dichoEl.textContent = original;
+                const limpio = limpiarStopwords(normalizar(original));
+                const encontrado = buscarElemento(limpio);
+                
+                if (encontrado) {
+                    mostrarElemento(encontrado.clave, encontrado.data);
+                } else {
+                    const htmlErr = `<div class="info-err">❌ No encontré el elemento: <b>${original}</b></div>`;
+                    mostrarGloboInfo(htmlErr);
+                    salidaEl.innerHTML = `<div class="err">❌ No encontré el elemento: <b>${original}</b></div>`;
+                    hablar(`No encontré el elemento ${original}. Dime otro, por favor.`).then(() => {
+                        escucharElemento();
+                    });
+                }
+            };
+            rec.onerror = () => {
+                estadoNormal();
+                const htmlErr = `<div class="info-err">❌ No te entendí.</div>`;
+                mostrarGloboInfo(htmlErr);
+                hablar("No te entendí. Inténtalo de nuevo.").then(() => escucharElemento());
+            };
+            rec.start();
+        }
+
+        function buscarElemento(fraseLimpia) {
+            if (ELEMENTOS[fraseLimpia]) return { clave: fraseLimpia, data: ELEMENTOS[fraseLimpia] };
+            for (const clave of Object.keys(ELEMENTOS)) {
+                const re = new RegExp(`\\b${clave}\\b`, 'i');
+                if (re.test(fraseLimpia)) return { clave, data: ELEMENTOS[clave] };
+            }
+            return null;
+        }
+
+        function mostrarElemento(clave, el) {
+            const htmlInfo = `
+                <div class="info-ok">
+                    <div class="info-row">
+                        <span class="info-title">Elemento:</span>
+                        <span class="info-value">${capitalizar(clave)}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Nombre en quechua:</span>
+                        <span class="info-value">${el.quechua}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Símbolo:</span>
+                        <span class="info-value">${el.simbolo}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Número atómico:</span>
+                        <span class="info-value">${el.numero}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Masa atómica:</span>
+                        <span class="info-value">${el.masa || "—"}</span>
+                    </div>
+                </div>
+            `;
+            mostrarGloboInfo(htmlInfo);
+
+            salidaEl.innerHTML = htmlInfo.replace(/info-/g, "");
+            
+            hablar(el.quechua).then(() => {
+                modo = "confirmarOtro";
+                hablar("¿Quieres saber otro elemento de la tabla periódica? Responde sí o no.")
+                    .then(() => escucharConfirmacion());
+            });
+        }
+
+        function escucharConfirmacion() {
+            const rec = crearRecon();
+            rec.onresult = (e) => {
+                estadoNormal();
+                const resp = normalizar(e.results[0][0].transcript);
+                dichoEl.textContent = e.results[0][0].transcript;
+                
+                const htmlDicho = `<div class="info-row"><span class="info-title">Lo que dijiste:</span><span class="info-value">${e.results[0][0].transcript}</span></div>`;
+                mostrarGloboInfo(htmlDicho);
+
+                if (/\bno\b/.test(resp)) {
+                    hablar("Tupananchiskama").then(()=> {
+                        const htmlFinal = `<div class="info-row"><span class="info-title">👋 Hasta luego:</span><span class="info-value"><b>Tupananchiskama</b> (en quechua)</span></div>`;
+                        mostrarGloboInfo(htmlFinal);
+                        salidaEl.innerHTML += htmlFinal.replace(/info-/g, "");
+                        sesionActiva = false;
+                        reactivarWakeWord();
+                    });
+                } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp)) {
+                    hablar("Dime el elemento.").then(()=> escucharElemento());
+                } else {
+                    hablar("No entendí. Por favor responde sí o no.").then(()=> escucharConfirmacion());
+                }
+            };
+            rec.onerror = () => {
+                estadoNormal();
+                const htmlErr = `<div class="info-err">❌ No te entendí.</div>`;
+                mostrarGloboInfo(htmlErr);
+                hablar("No te entendí. ¿Quieres otro? di sí o no.").then(()=> escucharConfirmacion());
+            };
+            rec.start();
+        }
+
+        function capitalizar(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        function mostrarGloboInfo(html) {
+            globoInfo.innerHTML = html;
+            globoInfo.classList.add('visible');
+        }
+
+        function ocultarGloboInfo() {
+            globoInfo.classList.remove('visible');
+            setTimeout(() => {
+                globoInfo.innerHTML = '';
+            }, 400);
+        }
+
+        function iniciarWakeWord() {
+            if (!tieneAPI()) return;
+            if (wakeRec) return;
+
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            wakeRec = new SR();
+            wakeRec.lang = "es-PE";
+            wakeRec.interimResults = false;
+            wakeRec.continuous = true;
+
+            wakeRec.onstart = () => {
+                estadoEscuchando();
+                ocultarGloboInfo();
+            };
+
+            wakeRec.onresult = (e) => {
+                const i = e.results.length - 1;
+                const original = e.results[i][0].transcript;
+                const tx = normalizar(original);
+                
+                if (!sesionActiva && /\bluis\s+alberto\b/.test(tx)) {
+                    sesionActiva = true;
+                    try { wakeRec.stop(); } catch(e){}
+                    bienvenida();
+                }
+            };
+            wakeRec.onend = () => {
+                if (!sesionActiva) {
+                    setTimeout(() => {
+                        try { wakeRec.start(); } catch(e){}
+                    }, 300);
+                }
+            };
+
+            if (navigator.mediaDevices?.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(() => { try { wakeRec.start(); } catch(e){} })
+                    .catch(() => {
+                        salidaEl.innerHTML = `🔇 Activa el micrófono para usar "Luis Alberto" como palabra clave.`;
+                    });
+            } else {
+                try { wakeRec.start(); } catch(e){}
+            }
+        }
+
+        function reactivarWakeWord() {
+            if (wakeRec && !sesionActiva) {
+                try { wakeRec.start(); } catch(e){}
+            }
+        }
+
+        btn.addEventListener('click', async () => {
+            if (navigator.mediaDevices?.getUserMedia) {
+                try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch {}
+            }
+            if (wakeRec) { try { wakeRec.stop(); } catch(e){} }
+            sesionActiva = true;
+            bienvenida();
+        });
+
+        salidaEl.textContent = "Presiona 'Hablar', permite el micrófono o di 'Luis Alberto' para activar. Luego di: oro, plata, carbono...";
+        document.addEventListener('DOMContentLoaded', iniciarWakeWord);
+
+    </script>
+</body>
+</html>
