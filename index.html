@@ -64,21 +64,21 @@
         /* Cejas */
         .ceja {
             position: absolute;
-            width: 50px;
-            height: 10px;
+            width: 90px;
+            height: 20px;
             background: linear-gradient(45deg, #2c3e50, #34495e);
             border-radius: 5px;
-            top: 70px;
+            top: 0px;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .ceja.izquierda { 
-            left: 70px; 
+            left: 35px; 
             transform: rotate(-15deg);
             animation: eyebrowShimmer 3s ease-in-out infinite alternate;
         }
         .ceja.derecha { 
-            right: 70px; 
+            right: 35px; 
             transform: rotate(15deg);
             animation: eyebrowShimmer 3s ease-in-out infinite alternate 0.5s;
         }
@@ -96,23 +96,23 @@
 
         /* Ojos */
         .ojo {
-            width: 40px;
-            height: 40px;
+            width: 100px;
+            height: 100px;
             background: radial-gradient(circle at 30% 30%, #ffffff, #f8f9fa);
             border-radius: 50%;
             position: absolute;
-            top: 95px;
+            top: 35px;
             border: 3px solid #2c3e50;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 15px rgba(0,0,0,0.2);
         }
         .ojo.izquierdo { 
-            left: 75px; 
+            left: 35px; 
             animation: eyeGlow 2s ease-in-out infinite alternate;
         }
         .ojo.derecho { 
-            right: 75px; 
+            right: 35px; 
             animation: eyeGlow 2s ease-in-out infinite alternate 0.3s;
         }
         
@@ -122,8 +122,8 @@
         }
         
         .pupila {
-            width: 18px;
-            height: 18px;
+            width: 28px;
+            height: 28px;
             background: radial-gradient(circle at 30% 30%, #2c3e50, #000);
             border-radius: 50%;
             position: absolute;
@@ -169,8 +169,8 @@
         }
 
         .boca.sonriendo {
-            width: 90px;
-            height: 45px;
+            width: 190px;
+            height: 55px;
             border: 4px solid #2c3e50;
             border-top: none;
             border-radius: 0 0 90px 90px;
@@ -190,8 +190,8 @@
         }
 
         .boca.hablando {
-            width: 60px;
-            height: 70px;
+            width: 80px;
+            height: 90px;
             background: radial-gradient(circle, #2c3e50, #000);
             border-radius: 50%;
             animation: speakAnimation 0.3s infinite alternate;
@@ -527,7 +527,7 @@
         let vocesDisponibles = [];
 
         // =============================================================================
-        // SISTEMA DE VOCES MEJORADO - CONFIGURADO PARA ACENTO PERUANO
+        // SISTEMA DE VOCES MEJORADO - OPTIMIZADO PARA VELOCIDAD
         // =============================================================================
 
         function inicializarVoces() {
@@ -536,7 +536,7 @@
                     vocesDisponibles = speechSynthesis.getVoices();
                     
                     if (vocesDisponibles.length === 0) {
-                        setTimeout(cargarVoces, 100);
+                        setTimeout(cargarVoces, 50); // Reducido de 100ms a 50ms
                         return;
                     }
 
@@ -624,7 +624,7 @@
                     cargarVoces();
                 } else {
                     speechSynthesis.addEventListener('voiceschanged', cargarVoces);
-                    setTimeout(cargarVoces, 1000);
+                    setTimeout(cargarVoces, 500); // Reducido de 1000ms a 500ms
                 }
             });
         }
@@ -647,9 +647,12 @@
             debugInfo.innerHTML = mensaje;
             setTimeout(() => {
                 debugInfo.innerHTML = "Escuchando...";
-            }, 3000);
+            }, 2000); // Reducido de 3000ms a 2000ms
         }
 
+        // =============================================================================
+        // FUNCIÓN DE HABLA OPTIMIZADA PARA VELOCIDAD
+        // =============================================================================
         async function hablar(texto, lang="es-PE") {
             const u = new SpeechSynthesisUtterance(texto);
             
@@ -662,10 +665,10 @@
                 u.lang = "es-PE";
             }
 
-            // Configuraciones optimizadas para acento peruano
-            u.rate = 0.8;      // Velocidad más pausada (característica del español peruano)
-            u.pitch = 0.95;    // Tono ligeramente más grave
-            u.volume = 0.9;    // Volumen claro
+            // CONFIGURACIONES OPTIMIZADAS PARA MAYOR VELOCIDAD
+            u.rate = 1.0;      // Aumentado de 0.8 a 1.1 (más rápido)
+            u.pitch = 1.0;     // Aumentado de 0.95 a 1.0 (tono más natural)
+            u.volume = 0.95;   // Aumentado de 0.9 a 0.95 (más claro)
 
             speechSynthesis.cancel();
             
@@ -691,9 +694,10 @@
                     resolve();
                 };
 
+                // Reducido el tiempo de espera de 100ms a 50ms
                 setTimeout(() => {
                     speechSynthesis.speak(u);
-                }, 100);
+                }, 50);
             });
         }
 
@@ -714,12 +718,16 @@
             return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
         }
 
+        // =============================================================================
+        // RECONOCIMIENTO DE VOZ OPTIMIZADO PARA MEJOR COMPRENSIÓN
+        // =============================================================================
         function crearRecon() {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             const r = new SR();
             r.lang = "es-PE";
-            r.interimResults = false;
-            r.maxAlternatives = 1;
+            r.interimResults = true;  // Cambiado de false a true para respuesta más rápida
+            r.maxAlternatives = 3;    // Aumentado de 1 a 3 para mejor reconocimiento
+            r.continuous = false;     // Mantener en false para sesiones específicas
 
             r.onstart = () => {
                 estadoEscuchando();
@@ -730,7 +738,7 @@
         }
 
         async function bienvenida() {
-            await hablar("¡Hola! Soy Luisa, tu asistente de elementos químicos. ¿Qué elemento de la tabla periódica quieres conocer Albertino?");
+            await hablar("Hola, soy Luisa. ¿Qué elemento químico quieres conocer Albertino?"); // Mensaje más corto
             escucharElemento();
         }
 
@@ -740,9 +748,37 @@
 
             modo = "preguntarElemento";
             const rec = crearRecon();
+            
+            // Variables para manejo de resultados intermedios
+            let timeoutId = null;
+            let ultimoResultado = "";
+
             rec.onresult = (e) => {
+                // Limpiar timeout anterior
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+
+                // Obtener el resultado más reciente
+                const resultado = e.results[e.results.length - 1];
+                const transcript = resultado[0].transcript;
+                
+                // Si es un resultado final, procesarlo inmediatamente
+                if (resultado.isFinal) {
+                    procesarResultado(transcript);
+                } else {
+                    // Si es resultado intermedio, esperar un poco por si hay más
+                    ultimoResultado = transcript;
+                    timeoutId = setTimeout(() => {
+                        if (ultimoResultado.length > 3) { // Solo procesar si tiene contenido útil
+                            procesarResultado(ultimoResultado);
+                        }
+                    }, 800); // Reducido de tiempo de espera
+                }
+            };
+
+            function procesarResultado(original) {
                 estadoNormal();
-                const original = e.results[0][0].transcript;
                 const limpio = limpiarStopwords(normalizar(original));
                 
                 mostrarDebug(`Escuché: "${original}"<br>Procesado: "${limpio}"`);
@@ -752,19 +788,42 @@
                 if (encontrado) {
                     mostrarElemento(encontrado.clave, encontrado.data, original);
                 } else {
-                    const htmlErr = `<div class="info-err">❌ No encontré el elemento: <b>${original}</b></div>`;
+                    const htmlErr = `<div class="info-err">❌ No encontré: <b>${original}</b></div>`;
                     mostrarGloboInfo(htmlErr);
-                    hablar(`No encontré el elemento ${original}. Dime otro, por favor.`).then(() => {
+                    hablar(`No encontré ${original}. Dime otro elemento.`).then(() => { // Mensaje más corto
                         escucharElemento();
                     });
                 }
-            };
-            rec.onerror = () => {
+            }
+
+            rec.onerror = (error) => {
                 estadoNormal();
-                const htmlErr = `<div class="info-err">❌ No te entendí.</div>`;
-                mostrarGloboInfo(htmlErr);
-                hablar("No te entendí. Inténtalo de nuevo.").then(() => escucharElemento());
+                console.log("Error de reconocimiento:", error);
+                
+                // Manejo más específico de errores
+                if (error.error === 'no-speech') {
+                    const htmlErr = `<div class="info-err">⏱️ No escuché nada</div>`;
+                    mostrarGloboInfo(htmlErr);
+                    hablar("No te escuché. Inténtalo de nuevo.").then(() => escucharElemento());
+                } else if (error.error === 'network') {
+                    const htmlErr = `<div class="info-err">🌐 Error de conexión</div>`;
+                    mostrarGloboInfo(htmlErr);
+                    hablar("Problema de conexión. Inténtalo de nuevo.").then(() => escucharElemento());
+                } else {
+                    const htmlErr = `<div class="info-err">❌ Error de audio</div>`;
+                    mostrarGloboInfo(htmlErr);
+                    hablar("Error de audio. Inténtalo de nuevo.").then(() => escucharElemento());
+                }
             };
+
+            rec.onspeechend = () => {
+                // Procesar automáticamente si tenemos resultado intermedio
+                if (ultimoResultado && ultimoResultado.length > 2) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    procesarResultado(ultimoResultado);
+                }
+            };
+
             rec.start();
         }
 
@@ -803,12 +862,12 @@
             for (const clave of Object.keys(ELEMENTOS)) {
                 // Si la frase contiene el elemento o viceversa
                 if (fraseLimpia.includes(clave) || clave.includes(fraseLimpia)) {
-                    // Solo si la coincidencia es significativa (más del 60% del nombre)
+                    // Solo si la coincidencia es significativa (más del 50% del nombre) - Reducido de 60% a 50%
                     const coincidencia = Math.max(
                         fraseLimpia.length / clave.length,
                         clave.length / fraseLimpia.length
                     );
-                    if (coincidencia > 0.6) {
+                    if (coincidencia > 0.5) {
                         return { clave, data: ELEMENTOS[clave] };
                     }
                 }
@@ -823,8 +882,8 @@
                 const maxLen = Math.max(fraseLimpia.length, clave.length);
                 const similitud = 1 - (distancia / maxLen);
                 
-                // Si la similitud es mayor al 70%
-                if (similitud > 0.7 && distancia < menorDistancia) {
+                // Si la similitud es mayor al 65% - Reducido de 70% a 65% para mejor reconocimiento
+                if (similitud > 0.65 && distancia < menorDistancia) {
                     menorDistancia = distancia;
                     mejorCoincidencia = { clave, data: ELEMENTOS[clave] };
                 }
@@ -889,41 +948,73 @@
             `;
             mostrarGloboInfo(htmlInfo);
             
-            hablar(`El elemento ${capitalizar(clave)} se dice ${el.quechua} en quechua.`).then(() => {
+            // Mensaje más conciso
+            hablar(`${capitalizar(clave)} es ${el.quechua} en quechua.`).then(() => {
                 modo = "confirmarOtro";
-                hablar("¿Quieres saber sobre otro elemento de la tabla periódica? Responde sí o no.")
+                hablar("¿Otro elemento? Di sí o no.") // Mensaje más corto
                     .then(() => escucharConfirmacion());
             });
         }
 
         function escucharConfirmacion() {
             const rec = crearRecon();
+            
+            let timeoutId = null;
+            let ultimoResultado = "";
+
             rec.onresult = (e) => {
-                estadoNormal();
-                const resp = normalizar(e.results[0][0].transcript);
+                if (timeoutId) clearTimeout(timeoutId);
+
+                const resultado = e.results[e.results.length - 1];
+                const transcript = resultado[0].transcript;
                 
-                const htmlDicho = `<div class="info-row"><span class="info-title">Lo que dijiste:</span><span class="info-value">${e.results[0][0].transcript}</span></div>`;
+                if (resultado.isFinal) {
+                    procesarConfirmacion(transcript);
+                } else {
+                    ultimoResultado = transcript;
+                    timeoutId = setTimeout(() => {
+                        if (ultimoResultado.length > 1) {
+                            procesarConfirmacion(ultimoResultado);
+                        }
+                    }, 600); // Tiempo reducido para confirmación
+                }
+            };
+
+            function procesarConfirmacion(respuesta) {
+                estadoNormal();
+                const resp = normalizar(respuesta);
+                
+                const htmlDicho = `<div class="info-row"><span class="info-title">Dijiste:</span><span class="info-value">${respuesta}</span></div>`;
                 mostrarGloboInfo(htmlDicho);
 
                 if (/\bno\b/.test(resp)) {
-                    hablar("Tupananchiskama, que tengas un buen día.").then(()=> {
-                        const htmlFinal = `<div class="info-row"><span class="info-title">👋 Hasta luego:</span><span class="info-value"><b>Tupananchiskama</b> (hasta pronto en quechua)</span></div>`;
+                    hablar("Aíwala Albertino Tupananchiskama .").then(()=> { // Mensaje más corto
+                        const htmlFinal = `<div class="info-row"><span class="info-title">👋 Hasta luego:</span><span class="info-value"><b>Tupananchiskama</b></span></div>`;
                         mostrarGloboInfo(htmlFinal);
                         sesionActiva = false;
                         reactivarWakeWord();
                     });
-                } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp)) {
-                    hablar("Perfecto. Dime qué elemento quieres conocer.").then(()=> escucharElemento());
+                } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp) || /\bbueno\b/.test(resp)) {
+                    hablar("¿Qué elemento?").then(()=> escucharElemento()); // Mensaje más corto
                 } else {
-                    hablar("No entendí tu respuesta. Por favor responde sí o no.").then(()=> escucharConfirmacion());
+                    hablar("Di sí o no.").then(()=> escucharConfirmacion()); // Mensaje más corto
                 }
-            };
+            }
+
             rec.onerror = () => {
                 estadoNormal();
-                const htmlErr = `<div class="info-err">❌ No te entendí.</div>`;
+                const htmlErr = `<div class="info-err">❌ No entendí</div>`;
                 mostrarGloboInfo(htmlErr);
-                hablar("No te entendí. ¿Quieres consultar otro elemento? Di sí o no.").then(()=> escucharConfirmacion());
+                hablar("¿Otro elemento? Di sí o no.").then(()=> escucharConfirmacion());
             };
+
+            rec.onspeechend = () => {
+                if (ultimoResultado && ultimoResultado.length > 1) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    procesarConfirmacion(ultimoResultado);
+                }
+            };
+
             rec.start();
         }
 
@@ -938,9 +1029,12 @@
             globoInfo.classList.remove('visible');
             setTimeout(() => {
                 globoInfo.innerHTML = '';
-            }, 400);
+            }, 300); // Reducido de 400ms a 300ms
         }
 
+        // =============================================================================
+        // WAKE WORD OPTIMIZADO PARA MEJOR RESPUESTA
+        // =============================================================================
         function iniciarWakeWord() {
             if (!tieneAPI()) return;
             if (wakeRec) return;
@@ -948,8 +1042,9 @@
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             wakeRec = new SR();
             wakeRec.lang = "es-PE";
-            wakeRec.interimResults = false;
+            wakeRec.interimResults = true;  // Cambiado a true para detección más rápida
             wakeRec.continuous = true;
+            wakeRec.maxAlternatives = 2;   // Añadido para mejor reconocimiento
 
             wakeRec.onstart = () => {
                 estadoEscuchando();
@@ -961,18 +1056,19 @@
                 const original = e.results[i][0].transcript;
                 const tx = normalizar(original);
                 
-                // CAMBIO PRINCIPAL: Nueva palabra de activación "Luisa"
-                if (!sesionActiva && (/\bluisa\b/.test(tx) || /\luisa/.test(tx))) {
+                // DETECCIÓN MÁS FLEXIBLE DE LA PALABRA DE ACTIVACIÓN
+                if (!sesionActiva && (/\bluisa\b/.test(tx) || /luisa/.test(tx) || /luisita/.test(tx) || /luis/.test(tx))) {
                     sesionActiva = true;
                     try { wakeRec.stop(); } catch(e){}
                     bienvenida();
                 }
             };
+
             wakeRec.onend = () => {
                 if (!sesionActiva) {
                     setTimeout(() => {
                         try { wakeRec.start(); } catch(e){}
-                    }, 300);
+                    }, 200); // Reducido de 300ms a 200ms
                 }
             };
 
@@ -989,7 +1085,9 @@
 
         function reactivarWakeWord() {
             if (wakeRec && !sesionActiva) {
-                try { wakeRec.start(); } catch(e){}
+                setTimeout(() => { // Pequeña pausa antes de reactivar
+                    try { wakeRec.start(); } catch(e){}
+                }, 500);
             }
         }
 

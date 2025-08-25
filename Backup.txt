@@ -1,202 +1,1005 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>🔬 ElementBot</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#f3f6fb; margin:0; padding:32px; text-align:center; }
-    h1 { margin-top:0; }
-    button { padding:12px 18px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-size:16px; cursor:pointer; }
-    button:hover { background:#1e40af; }
-    #panel { margin:20px auto; max-width:640px; text-align:left; background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
-    .row { margin:6px 0; }
-    .ok { color:#065f46; }
-    .err { color:#9b1c1c; }
-  </style>
+    <meta charset="UTF-8" />
+    <title>🔬 BOT ALBERTINO</title>
+    <link rel="icon" href="School LAS.png">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e7e437 0%, #51e43d 100%);
+            margin: 0;
+            padding: 32px;
+            text-align: center;
+            animation: backgroundShift 10s ease-in-out infinite alternate;
+        }
+        
+        @keyframes backgroundShift {
+            0% { background: linear-gradient(135deg, #ced12e 0%, #55dd3a 100%); }
+            100% { background: linear-gradient(135deg, #28ee53 0%, #d1ee4f 100%); }
+        }
+        h1 { 
+            margin-top: 0; 
+            color: white; 
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: titleFloat 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleFloat {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        /* Estilos de la cara mejorada */
+        #cara-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            animation: containerFloat 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes containerFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-10px) rotate(1deg); }
+        }
+        
+        .cara {
+            width: 300px;
+            height: 300px;
+            background: transparent;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.2));
+        }
+
+        /* Cejas */
+        .ceja {
+            position: absolute;
+            width: 50px;
+            height: 10px;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            border-radius: 5px;
+            top: 70px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .ceja.izquierda { 
+            left: 70px; 
+            transform: rotate(-15deg);
+            animation: eyebrowShimmer 3s ease-in-out infinite alternate;
+        }
+        .ceja.derecha { 
+            right: 70px; 
+            transform: rotate(15deg);
+            animation: eyebrowShimmer 3s ease-in-out infinite alternate 0.5s;
+        }
+        
+        @keyframes eyebrowShimmer {
+            0% { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+            100% { box-shadow: 0 4px 15px rgba(52, 73, 94, 0.5); }
+        }
+        .cara.escuchando .ceja.izquierda {
+            transform: rotate(-25deg) translateY(-5px);
+        }
+        .cara.escuchando .ceja.derecha {
+            transform: rotate(25deg) translateY(-5px);
+        }
+
+        /* Ojos */
+        .ojo {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f8f9fa);
+            border-radius: 50%;
+            position: absolute;
+            top: 95px;
+            border: 3px solid #2c3e50;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .ojo.izquierdo { 
+            left: 75px; 
+            animation: eyeGlow 2s ease-in-out infinite alternate;
+        }
+        .ojo.derecho { 
+            right: 75px; 
+            animation: eyeGlow 2s ease-in-out infinite alternate 0.3s;
+        }
+        
+        @keyframes eyeGlow {
+            0% { box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 15px rgba(0,0,0,0.2); }
+            100% { box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 6px 25px rgba(102, 126, 234, 0.4); }
+        }
+        
+        .pupila {
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 30% 30%, #2c3e50, #000);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: pupilShine 2.5s ease-in-out infinite;
+        }
+        
+        @keyframes pupilShine {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* Estados de los ojos */
+        .cara.hablando .ojo {
+            transform: scaleY(0.8);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 8px 30px rgba(245, 87, 108, 0.5);
+        }
+        .cara.escuchando .ojo {
+            transform: scaleY(1.1);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+        .cara.escuchando .pupila {
+            transform: translate(-50%, -50%) scale(1.2);
+            animation: pupilFocus 1s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pupilFocus {
+            0% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1.3); }
+        }
+
+        /* Boca - Estado normal/escuchando */
+        .boca {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+        }
+
+        .boca.sonriendo {
+            width: 90px;
+            height: 45px;
+            border: 4px solid #2c3e50;
+            border-top: none;
+            border-radius: 0 0 90px 90px;
+            background: linear-gradient(to bottom, #ff6b6b, #ff5252);
+            animation: smilePulse 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes smilePulse {
+            0% { 
+                background: linear-gradient(to bottom, #ff6b6b, #ff5252);
+                filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+            }
+            100% { 
+                background: linear-gradient(to bottom, #ff8a80, #ff6b6b);
+                filter: drop-shadow(0 6px 20px rgba(255, 107, 107, 0.4));
+            }
+        }
+
+        .boca.hablando {
+            width: 60px;
+            height: 70px;
+            background: radial-gradient(circle, #2c3e50, #000);
+            border-radius: 50%;
+            animation: speakAnimation 0.3s infinite alternate;
+            filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));
+        }
+
+        @keyframes speakAnimation {
+            0% { 
+                transform: translateX(-50%) scaleY(1);
+                background: radial-gradient(circle, #2c3e50, #000);
+            }
+            100% { 
+                transform: translateX(-50%) scaleY(1.3) scale(1.05);
+                background: radial-gradient(circle, #34495e, #2c3e50);
+            }
+        }
+
+        /* Globo de información estilo nube */
+        #globo-info {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 20px 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            font-size: 14px;
+            text-align: left;
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px) scale(0.8);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: bubbleFloat 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes bubbleFloat {
+            0% { transform: translateX(-50%) translateY(-20px) scale(0.8) rotate(-0.5deg); }
+            100% { transform: translateX(-50%) translateY(-20px) scale(0.8) rotate(0.5deg); }
+        }
+
+        /* Efecto nube para el globo */
+        #globo-info::before,
+        #globo-info::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+        }
+        
+        #globo-info::before {
+            width: 20px;
+            height: 20px;
+            bottom: -12px;
+            left: 30px;
+        }
+        
+        #globo-info::after {
+            width: 15px;
+            height: 15px;
+            bottom: -18px;
+            left: 50px;
+        }
+
+        #globo-info.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .info-row { 
+            margin: 8px 0; 
+            display: flex;
+            align-items: center;
+        }
+        .info-title { 
+            font-weight: bold; 
+            color: #2563eb;
+            min-width: 120px;
+            margin-right: 8px;
+        }
+        .info-value {
+            color: #1f2937;
+            flex: 1;
+        }
+        .info-ok { color:#065f46; }
+        .info-err { color:#dc2626; }
+
+        /* Indicador de debug */
+        .debug-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-width: 300px;
+            opacity: 0.7;
+        }
+
+        /* Animación de parpadeo sutil */
+        @keyframes parpadeo-sutil {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        .cara:not(.hablando) .ojo {
+            animation: parpadeo-sutil 4s infinite;
+        }
+    </style>
 </head>
 <body>
-  <h1>🔬 ElementBot</h1>
-  <p><button id="btn">🎤 Hablar</button></p>
-  <div id="panel">
-    <div class="row"><b>Lo que dijiste:</b> <span id="dicho">—</span></div>
-    <hr>
-    <div id="salida">Aquí aparecerá la respuesta…</div>
-  </div>
+    <h1>🔬 ElementBot</h1>
 
-  <script>
-    // ======= Diccionario (agrega más cuando quieras) =======
-    // Claves sin tildes y en minúsculas
-    const ELEMENTOS = {
-        "hidrogeno":   { quechua: "Yaku willka", simbolo: "H", numero: 1, masa: "1.008" },
-        "helio":       { quechua: "Ch'isi wayra", simbolo: "He", numero: 2, masa: "4.0026" },
-        "litio":       { quechua: "—", simbolo: "Li", numero: 3, masa: "6.94" },
-        "berilio":     { quechua: "—", simbolo: "Be", numero: 4, masa: "9.0122" },
-        "boro":        { quechua: "—", simbolo: "B", numero: 5, masa: "10.81" },
-        "carbono":     { quechua: "Rumi k'uchi", simbolo: "C", numero: 6, masa: "12.011" },
-        "nitrogeno":   { quechua: "—", simbolo: "N", numero: 7, masa: "14.007" },
-        "oxigeno":     { quechua: "Pukyu samay", simbolo: "O", numero: 8, masa: "15.999" },
-        "fluor":       { quechua: "—", simbolo: "F", numero: 9, masa: "18.998" },
-        "neon":        { quechua: "—", simbolo: "Ne", numero: 10, masa: "20.180" },
-        "sodio":       { quechua: "—", simbolo: "Na", numero: 11, masa: "22.990" },
-        "magnesio":    { quechua: "—", simbolo: "Mg", numero: 12, masa: "24.305" },
-        "aluminio":    { quechua: "—", simbolo: "Al", numero: 13, masa: "26.982" },
-        "silicio":     { quechua: "—", simbolo: "Si", numero: 14, masa: "28.085" },
-        "fosforo":     { quechua: "—", simbolo: "P", numero: 15, masa: "30.974" },
-        "azufre":      { quechua: "K’allpa rumi", simbolo: "S", numero: 16, masa: "32.06" },
-        "cloro":       { quechua: "—", simbolo: "Cl", numero: 17, masa: "35.45" },
-        "argon":       { quechua: "—", simbolo: "Ar", numero: 18, masa: "39.948" },
-        "potasio":     { quechua: "—", simbolo: "K", numero: 19, masa: "39.098" },
-        "calcio":      { quechua: "—", simbolo: "Ca", numero: 20, masa: "40.078" },
-        "hierro":      { quechua: "Q’illay", simbolo: "Fe", numero: 26, masa: "55.845" },
-        "plata":       { quechua: "Qolqe", simbolo: "Ag", numero: 47, masa: "107.868" },
-        "oro":         { quechua: "Quri", simbolo: "Au", numero: 79, masa: "196.967" },
-        "plutonio":    { quechua: "—", simbolo: "Pu", numero: 94, masa: "244" },
-        "oganeson":    { quechua: "—", simbolo: "Og", numero: 118, masa: "294" }
-      };
+    <div class="debug-info" id="debug-info">
+        Reconocimiento de voz listo...
+    </div>
 
+    <div id="cara-container">
+        <div id="globo-info"></div>
+        <div class="cara">
+            <div class="ceja izquierda"></div>
+            <div class="ceja derecha"></div>
+            <div class="ojo izquierdo"><div class="pupila"></div></div>
+            <div class="ojo derecho"><div class="pupila"></div></div>
+            <div class="boca sonriendo"></div>
+        </div>
+    </div>
 
-    // Palabras de relleno que podemos ignorar al buscar el elemento
-    const STOPWORDS = new Set(["el","la","los","las","un","una","del","de","al","quiero","saber","sobre","del","elemento","elmento","por","favor","dime","di"]);
+    <script>
+       const ELEMENTOS = {
+            "hidrogeno":   { quechua: "Idruhinu", simbolo: "H", numero: 1, masa: "1.008" },
+            "helio":       { quechua: "Illiw", simbolo: "He", numero: 2, masa: "4.0026" },
+            "litio":       { quechua: "Rumiyuq", simbolo: "Li", numero: 3, masa: "6.94" },
+            "berilio":     { quechua: "Biriliyu", simbolo: "Be", numero: 4, masa: "9.0122" },
+            "boro":        { quechua: "Buru", simbolo: "B", numero: 5, masa: "10.81" },
+            "carbono":     { quechua: "k'illimsayaq", simbolo: "C", numero: 6, masa: "12.011" },
+            "nitrogeno":   { quechua: "chhukwi", simbolo: "N", numero: 7, masa: "14.007" },
+            "oxigeno":     { quechua: "Wayrasamay", simbolo: "O", numero: 8, masa: "15.999" },
+            "fluor":       { quechua: "Flur", simbolo: "F", numero: 9, masa: "18.998" },
+            "neon":        { quechua: "Niyun", simbolo: "Ne", numero: 10, masa: "20.180" },
+            "sodio":       { quechua: "Natriyu", simbolo: "Na", numero: 11, masa: "22.990" },
+            "magnesio":    { quechua: "Qunta", simbolo: "Mg", numero: 12, masa: "24.305" },
+            "aluminio":    { quechua: "Aluminiyu", simbolo: "Al", numero: 13, masa: "26.982" },
+            "silicio":     { quechua: "Silisiyu", simbolo: "Si", numero: 14, masa: "28.085" },
+            "fosforo":     { quechua: "Fusfuru", simbolo: "P", numero: 15, masa: "30.974" },
+            "azufre":      { quechua: "Salliy", simbolo: "S", numero: 16, masa: "32.06" },
+            "cloro":       { quechua: "Kluru", simbolo: "Cl", numero: 17, masa: "35.45" },
+            "argon":       { quechua: "Arkun", simbolo: "Ar", numero: 18, masa: "39.948" },
+            "potasio":     { quechua: "Putasiyu", simbolo: "K", numero: 19, masa: "39.098" },
+            "calcio":      { quechua: "Iskuya", simbolo: "Ca", numero: 20, masa: "40.078" },
+            "escandio":    { quechua: "Iskandiyu", simbolo: "Sc", numero: 21, masa: "44.956" },
+            "titanio":     { quechua: "Titaniyu", simbolo: "Ti", numero: 22, masa: "47.867" },
+            "vanadio":     { quechua: "Vanadiyu", simbolo: "V", numero: 23, masa: "50.942" },
+            "cromo":       { quechua: "Krumu", simbolo: "Cr", numero: 24, masa: "51.996" },
+            "manganeso":   { quechua: "Mankanisu", simbolo: "Mn", numero: 25, masa: "54.938" },
+            "hierro":      { quechua: "Q'illay", simbolo: "Fe", numero: 26, masa: "55.845" },
+            "cobalto":     { quechua: "Ankasi", simbolo: "Co", numero: 27, masa: "58.933" },
+            "niquel":      { quechua: "Nikil", simbolo: "Ni", numero: 28, masa: "58.693" },
+            "cobre":       { quechua: "Anta", simbolo: "Cu", numero: 29, masa: "63.546" },
+            "zinc":        { quechua: "Sink", simbolo: "Zn", numero: 30, masa: "65.38" },
+            "galio":       { quechua: "Galiu", simbolo: "Ga", numero: 31, masa: "69.723" },
+            "germanio":    { quechua: "Hirmaniyu", simbolo: "Ge", numero: 32, masa: "72.630" },
+            "arsenico":    { quechua: "Arsiniku", simbolo: "As", numero: 33, masa: "74.922" },
+            "selenio":     { quechua: "Siliniyu", simbolo: "Se", numero: 34, masa: "78.971" },
+            "bromo":       { quechua: "Brumu", simbolo: "Br", numero: 35, masa: "79.904" },
+            "kripton":     { quechua: "Kripton", simbolo: "Kr", numero: 36, masa: "83.798" },
+            "rubidio":     { quechua: "Rupidiyu", simbolo: "Rb", numero: 37, masa: "85.468" },
+            "estroncio":   { quechua: "Istrunsiyu", simbolo: "Sr", numero: 38, masa: "87.62" },
+            "itrio":       { quechua: "Itriyu", simbolo: "Y", numero: 39, masa: "88.906" },
+            "circonio":    { quechua: "Sircunio", simbolo: "Zr", numero: 40, masa: "91.224" },
+            "niobio":      { quechua: "Niyubiyu", simbolo: "Nb", numero: 41, masa: "92.906" },
+            "molibdeno":   { quechua: "Muliptiniyu", simbolo: "Mo", numero: 42, masa: "95.95" },
+            "tecnecio":    { quechua: "Tiknisiyu", simbolo: "Tc", numero: 43, masa: "98" },
+            "rutenio":     { quechua: "Ruthiniyu", simbolo: "Ru", numero: 44, masa: "101.07" },
+            "rodio":       { quechua: "Rutiyu", simbolo: "Rh", numero: 45, masa: "102.91" },
+            "paladio":     { quechua: "Qullqiya", simbolo: "Pd", numero: 46, masa: "106.42" },
+            "plata":       { quechua: "Qullqi", simbolo: "Ag", numero: 47, masa: "107.868" },
+            "cadmio":      { quechua: "Kadmiyu", simbolo: "Cd", numero: 48, masa: "112.41" },
+            "indio":       { quechua: "Indiyu", simbolo: "In", numero: 49, masa: "114.82" },
+            "estaño":      { quechua: "Chayanta", simbolo: "Sn", numero: 50, masa: "118.71" },
+            "antimonio":   { quechua: "Hanku", simbolo: "Sb", numero: 51, masa: "121.76" },
+            "telurio":     { quechua: "Tiluriyu", simbolo: "Te", numero: 52, masa: "127.60" },
+            "yodo":        { quechua: "Yudu", simbolo: "I", numero: 53, masa: "126.90" },
+            "xenon":       { quechua: "Sinun", simbolo: "Xe", numero: 54, masa: "131.29" },
+            "cesio":       { quechua: "Sisiyu", simbolo: "Cs", numero: 55, masa: "132.91" },
+            "bario":       { quechua: "Bariyu", simbolo: "Ba", numero: 56, masa: "137.33" },
+            "lantano":     { quechua: "Lanthanu", simbolo: "La", numero: 57, masa: "138.91" },
+            "cerio":       { quechua: "Siriyu", simbolo: "Ce", numero: 58, masa: "140.12" },
+            "praseodimio": { quechua: "Prasiyudimiyu", simbolo: "Pr", numero: 59, masa: "140.91" },
+            "neodimio":    { quechua: "Neodimiyu", simbolo: "Nd", numero: 60, masa: "144.24" },
+            "prometio":    { quechua: "Prumithiyu", simbolo: "Pm", numero: 61, masa: "145" },
+            "samario":     { quechua: "Samariyu", simbolo: "Sm", numero: 62, masa: "150.36" },
+            "europio":     { quechua: "Eyurupiyu", simbolo: "Eu", numero: 63, masa: "151.96" },
+            "gadolinio":   { quechua: "Gaduliniyu", simbolo: "Gd", numero: 64, masa: "157.25" },
+            "terbio":      { quechua: "Tirbiyu", simbolo: "Tb", numero: 65, masa: "158.93" },
+            "disprosio":   { quechua: "Disprusiyu", simbolo: "Dy", numero: 66, masa: "162.50" },
+            "holmio":      { quechua: "Ulmiyu", simbolo: "Ho", numero: 67, masa: "164.93" },
+            "erbio":       { quechua: "Irbiyu", simbolo: "Er", numero: 68, masa: "167.26" },
+            "tulio":       { quechua: "Thuliyu", simbolo: "Tm", numero: 69, masa: "168.93" },
+            "iterbio":     { quechua: "Itirbiyu", simbolo: "Yb", numero: 70, masa: "173.05" },
+            "lutecio":     { quechua: "Lutisiyu", simbolo: "Lu", numero: 71, masa: "174.97" },
+            "hafnio":      { quechua: "Hafniyu", simbolo: "Hf", numero: 72, masa: "178.49" },
+            "tantalio":    { quechua: "Tantaliyu", simbolo: "Ta", numero: 73, masa: "180.95" },
+            "wolframio":   { quechua: "Wulframiyu", simbolo: "W", numero: 74, masa: "183.84" },
+            "renio":       { quechua: "Riniyu", simbolo: "Re", numero: 75, masa: "186.21" },
+            "osmio":       { quechua: "Usmiyu", simbolo: "Os", numero: 76, masa: "190.23" },
+            "iridio":      { quechua: "iritdiyu", simbolo: "Ir", numero: 77, masa: "192.22" },
+            "platino":     { quechua: "Paladiyu", simbolo: "Pt", numero: 78, masa: "195.08" },
+            "oro":         { quechua: "Quri", simbolo: "Au", numero: 79, masa: "196.97" },
+            "mercurio":    { quechua: "Qatuylla", simbolo: "Hg", numero: 80, masa: "200.59" },
+            "talio":       { quechua: "Thaliyu", simbolo: "Tl", numero: 81, masa: "204.38" },
+            "plomo":       { quechua: "T'iti", simbolo: "Pb", numero: 82, masa: "207.2" },
+            "bismuto":     { quechua: "Bismutu", simbolo: "Bi", numero: 83, masa: "208.98" },
+            "polonio":     { quechua: "Puluniyu", simbolo: "Po", numero: 84, masa: "209" },
+            "astato":      { quechua: "Astatu", simbolo: "At", numero: 85, masa: "210" },
+            "radon":       { quechua: "Radun", simbolo: "Rn", numero: 86, masa: "222" },
+            "francio":     { quechua: "Fransiyu", simbolo: "Fr", numero: 87, masa: "223" },
+            "radio":       { quechua: "Radiyu", simbolo: "Ra", numero: 88, masa: "226" },
+            "actinio":     { quechua: "Aktiniyu", simbolo: "Ac", numero: 89, masa: "227" },
+            "torio":       { quechua: "Thuriyu", simbolo: "Th", numero: 90, masa: "232.04" },
+            "protactinio": { quechua: "Prutaktiniyu", simbolo: "Pa", numero: 91, masa: "231.04" },
+            "uranio":      { quechua: "Uraniyu", simbolo: "U", numero: 92, masa: "238.03" },
+            "neptunio":    { quechua: "Niptuniyu", simbolo: "Np", numero: 93, masa: "237" },
+            "plutonio":    { quechua: "Plutuniyu", simbolo: "Pu", numero: 94, masa: "244" },
+            "americio":    { quechua: "Amirisiyu", simbolo: "Am", numero: 95, masa: "243" },
+            "curio":       { quechua: "Kuriyu", simbolo: "Cm", numero: 96, masa: "247" },
+            "berkelio":    { quechua: "Birkiliyu", simbolo: "Bk", numero: 97, masa: "247" },
+            "californio":  { quechua: "Kalifurniyu", simbolo: "Cf", numero: 98, masa: "251" },
+            "einsteinio":  { quechua: "Instiniyu", simbolo: "Es", numero: 99, masa: "252" },
+            "fermio":      { quechua: "Firmiyu", simbolo: "Fm", numero: 100, masa: "257" },
+            "mendelevio":  { quechua: "Mindiliviyu", simbolo: "Md", numero: 101, masa: "258" },
+            "nobelio":     { quechua: "Nubiliyu", simbolo: "No", numero: 102, masa: "259" },
+            "lawrencio":   { quechua: "Lawrinsiyu", simbolo: "Lr", numero: 103, masa: "266" },
+            "rutherfordio":{ quechua: "Ruthirfurdiyu", simbolo: "Rf", numero: 104, masa: "267" },
+            "dubnio":      { quechua: "Dubniyu", simbolo: "Db", numero: 105, masa: "268" },
+            "seaborgio":   { quechua: "Siyaburhiyu", simbolo: "Sg", numero: 106, masa: "269" },
+            "bohrio":      { quechua: "Buriyu", simbolo: "Bh", numero: 107, masa: "270" },
+            "hassio":      { quechua: "Asiyu", simbolo: "Hs", numero: 108, masa: "277" },
+            "meitnerio":   { quechua: "Mitniriyu", simbolo: "Mt", numero: 109, masa: "278" },
+            "darmstadtio": { quechua: "Darmstatiyu", simbolo: "Ds", numero: 110, masa: "281" },
+            "roentgenio":  { quechua: "Ruyinthiniyu", simbolo: "Rg", numero: 111, masa: "282" },
+            "copernicio":  { quechua: "Kupirnisiyu", simbolo: "Cn", numero: 112, masa: "285" },
+            "nihonio":     { quechua: "Nihuniyu", simbolo: "Nh", numero: 113, masa: "286" },
+            "flerovio":    { quechua: "Flirupiyu", simbolo: "Fl", numero: 114, masa: "289" },
+            "moscovio":    { quechua: "Muskuviyu", simbolo: "Mc", numero: 115, masa: "290" },
+            "livermorio":  { quechua: "Lipirmuniyu", simbolo: "Lv", numero: 116, masa: "293" },
+            "teneso":      { quechua: "Tinisiyu", simbolo: "Ts", numero: 117, masa: "294" },
+            "oganeson":    { quechua: "Ukanisun", simbolo: "Og", numero: 118, masa: "294" }
+        };
 
-    // ======= Estado de diálogo =======
-    let modo = "preguntarElemento"; // "preguntarElemento" | "confirmarOtro"
-    const dichoEl = document.getElementById("dicho");
-    const salidaEl = document.getElementById("salida");
-    const btn = document.getElementById("btn");
+        // SISTEMA DE SINÓNIMOS Y VARIACIONES PARA MEJORAR RECONOCIMIENTO
+        const SINONIMOS = {
+            // Variaciones comunes de pronunciación
+            "germanio": ["jemanio", "hermano", "hermaniyo", "jermanio"],
+            "prometio": ["promethio", "prometeo", "promiteyo"],
+            "terbio": ["terbiyo", "tervio", "terbium"],
+            "wolframio": ["tungsteno", "wulfranio", "volframio"],
+            "niquel": ["nikel", "niqel", "níquel"],
+            "azufre": ["asufre", "sufre"],
+            "fosforo": ["fosforo", "phosphoro", "fosfor"],
+            "yodo": ["iodo", "yodin", "iodin"],
+            "xenon": ["senon", "ksenon"],
+            "cesio": ["cesareo", "sesio"],
+            "estaño": ["estanio", "estano"],
+            "antimonio": ["antimoniyo"],
+            "arsenico": ["arsnico", "arseniko"],
+            "selenio": ["seleniyo", "selenium"],
+            "bromo": ["bromio"],
+            "kripton": ["cripton", "krypton"],
+            "rubidio": ["rubidium"],
+            "circonio": ["zirconio", "sirconio"],
+            "molibdeno": ["moliptino", "molybdeno"],
+            "tecnecio": ["teknesio"],
+            "rutenio": ["ruthenio"],
+            "rodio": ["rhodio"],
+            "paladio": ["paladiym"],
+            "cadmio": ["kadmio"],
+            "indio": ["indiym"],
+            "telurio": ["tellurio"],
+            "bario": ["bariym"],
+            "lantano": ["lanthano"],
+            "cerio": ["seriyo"],
+            "praseodimio": ["praseodimium"],
+            "neodimio": ["neodimium"],
+            "samario": ["samarium"],
+            "europio": ["europium"],
+            "gadolinio": ["gadolinium"],
+            "disprosio": ["disprosium"],
+            "holmio": ["holmium"],
+            "erbio": ["erbium"],
+            "tulio": ["thulium"],
+            "iterbio": ["ytterbio", "iterbium"],
+            "lutecio": ["lutetium"],
+            "hafnio": ["hafnium"],
+            "tantalio": ["tantalum"],
+            "renio": ["rhenium"],
+            "osmio": ["osmium"],
+            "iridio": ["iridium"],
+            "platino": ["platinum"],
+            "mercurio": ["mercury"],
+            "talio": ["thallium"],
+            "bismuto": ["bismuth"],
+            "polonio": ["polonium"],
+            "astato": ["astatine"],
+            "radon": ["radón"],
+            "francio": ["francium"],
+            "radio": ["radium"],
+            "actinio": ["actinium"],
+            "torio": ["thorium"],
+            "protactinio": ["protactinium"],
+            "uranio": ["uranium"],
+            "neptunio": ["neptunium"],
+            "plutonio": ["plutonium"],
+            "americio": ["americium"]
+        };
 
-    // ======= Utilidades =======
-    function normalizar(txt) {
-      // minúsculas, sin tildes, sin puntuación, espacios simples
-      return txt
-        .toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // quita tildes
-        .replace(/[.,;:!?¿¡()"']/g, ' ')                    // quita puntuación
-        .replace(/\s+/g, ' ')                                // espacios múltiples -> 1
-        .trim();
-    }
+        const STOPWORDS = new Set(["el","la","los","las","un","una","del","de","al","quiero","saber","sobre","del","elemento","elmento","por","favor","dime","di"]);
 
-    function limpiarStopwords(frase) {
-      const palabras = frase.split(' ').filter(w => !STOPWORDS.has(w));
-      return palabras.join(' ').trim();
-    }
+        let modo = "preguntarElemento";
+        const globoInfo = document.getElementById('globo-info');
+        const debugInfo = document.getElementById('debug-info');
+        const cara = document.querySelector('.cara');
+        const boca = document.querySelector('.boca');
 
-    function hablar(texto, lang="es-PE") {
-      const u = new SpeechSynthesisUtterance(texto);
-      u.lang = lang; // navegadores suelen mapear a una voz es-*
-      speechSynthesis.cancel(); // evita superposición
-      speechSynthesis.speak(u);
-      return new Promise(res => { u.onend = res; });
-    }
+        let sesionActiva = false;
+        let wakeRec = null;
+        let mejorVoz = null;
+        let vocesDisponibles = [];
 
-    function tieneAPI() {
-      return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-    }
+        // =============================================================================
+        // SISTEMA DE VOCES MEJORADO - CONFIGURADO PARA ACENTO PERUANO
+        // =============================================================================
 
-    function crearRecon() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const r = new SR();
-      r.lang = "es-PE"; // español Perú
-      r.interimResults = false;
-      r.maxAlternatives = 1;
-      return r;
-    }
+        function inicializarVoces() {
+            return new Promise((resolve) => {
+                const cargarVoces = () => {
+                    vocesDisponibles = speechSynthesis.getVoices();
+                    
+                    if (vocesDisponibles.length === 0) {
+                        setTimeout(cargarVoces, 100);
+                        return;
+                    }
 
-    // ======= Lógica principal =======
-    async function bienvenida() {
-      await hablar("Hola Albertino, ¿qué elemento de la tabla periódica quieres saber?");
-      escucharElemento();
-    }
+                    // Filtrar voces en español con prioridad peruana
+                    const vocesEspanol = vocesDisponibles.filter(voz => {
+                        const lang = voz.lang.toLowerCase();
+                        const nombre = voz.name.toLowerCase();
+                        return lang.includes('es') || lang.includes('spa') || nombre.includes('spanish');
+                    });
 
-    function escucharElemento() {
-      modo = "preguntarElemento";
-      const rec = crearRecon();
-      rec.onresult = (e) => {
-        const original = e.results[0][0].transcript;
-        dichoEl.textContent = original;
-        const limpio = limpiarStopwords(normalizar(original));
+                    // Priorizar voces peruanas y latinoamericanas
+                    const prioridades = [
+                        // Máxima prioridad: voces peruanas específicas
+                        /peru|pe[-_]|es[-_]pe/i,
+                        // Alta prioridad: voces latinoamericanas neutras
+                        /latin|america|neutral|es[-_](co|mx|ar|cl|ve|ec)/i,
+                        // Voces naturales y premium
+                        /neural|premium|enhanced|natural|google|microsoft.*spanish/i,
+                        // Evitar voces españolas (españa)
+                        /^(?!.*es[-_]es).*es/i,
+                        // Preferir voces femeninas para mejor claridad
+                        /female|mujer|woman|maria|carmen|sofia|elena|lucia|paloma/i
+                    ];
 
-        const encontrado = buscarElemento(limpio);
-        if (encontrado) {
-          mostrarElemento(encontrado.clave, encontrado.data);
-        } else {
-          salidaEl.innerHTML = `<div class="err">❌ No encontré el elemento: <b>${original}</b></div>`;
-          hablar(`No encontré el elemento ${original}. Dime otro, por favor.`).then(() => {
+                    let mejorPuntuacion = -1;
+                    mejorVoz = null;
+
+                    console.log("Voces disponibles:", vocesEspanol.map(v => ({
+                        nombre: v.name, 
+                        idioma: v.lang, 
+                        local: v.localService
+                    })));
+
+                    vocesEspanol.forEach(voz => {
+                        let puntuacion = 0;
+                        
+                        // Aplicar prioridades
+                        prioridades.forEach((patron, indice) => {
+                            if (patron.test(voz.name) || patron.test(voz.lang)) {
+                                puntuacion += (prioridades.length - indice) * 10;
+                            }
+                        });
+
+                        // Bonificaciones adicionales
+                        if (voz.localService) puntuacion += 5;
+                        if (/female|woman|f$/i.test(voz.name)) puntuacion += 3;
+                        
+                        // Penalizar voces españolas de España
+                        if (/es[-_]es|spain|españa/i.test(voz.lang) || /es[-_]es/i.test(voz.name)) {
+                            puntuacion -= 15;
+                        }
+                        
+                        // Penalizar voces robóticas
+                        if (/robotic|microsoft.*sam|default|basic/i.test(voz.name)) {
+                            puntuacion -= 5;
+                        }
+
+                        console.log(`Voz: ${voz.name} (${voz.lang}) - Puntuación: ${puntuacion}`);
+
+                        if (puntuacion > mejorPuntuacion) {
+                            mejorPuntuacion = puntuacion;
+                            mejorVoz = voz;
+                        }
+                    });
+
+                    // Fallback si no encontramos ninguna voz
+                    if (!mejorVoz && vocesDisponibles.length > 0) {
+                        // Buscar cualquier voz que no sea española de España
+                        const vozFallback = vocesEspanol.find(v => 
+                            !(/es[-_]es|spain|españa/i.test(v.lang))
+                        ) || vocesEspanol[0];
+                        mejorVoz = vozFallback;
+                    }
+
+                    console.log("Voz seleccionada:", mejorVoz ? {
+                        nombre: mejorVoz.name,
+                        idioma: mejorVoz.lang,
+                        local: mejorVoz.localService
+                    } : "Ninguna");
+
+                    resolve();
+                };
+
+                if (speechSynthesis.getVoices().length > 0) {
+                    cargarVoces();
+                } else {
+                    speechSynthesis.addEventListener('voiceschanged', cargarVoces);
+                    setTimeout(cargarVoces, 1000);
+                }
+            });
+        }
+
+        function normalizar(txt) {
+            return txt
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[.,;:!?¿¡()"']/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function limpiarStopwords(frase) {
+            const palabras = frase.split(' ').filter(w => !STOPWORDS.has(w));
+            return palabras.join(' ').trim();
+        }
+
+        function mostrarDebug(mensaje) {
+            debugInfo.innerHTML = mensaje;
+            setTimeout(() => {
+                debugInfo.innerHTML = "Escuchando...";
+            }, 3000);
+        }
+
+        async function hablar(texto, lang="es-PE") {
+            const u = new SpeechSynthesisUtterance(texto);
+            
+            // Aplicar la mejor voz disponible
+            if (mejorVoz) {
+                u.voice = mejorVoz;
+                u.lang = mejorVoz.lang;
+            } else {
+                // Configurar idioma peruano como fallback
+                u.lang = "es-PE";
+            }
+
+            // Configuraciones optimizadas para acento peruano
+            u.rate = 0.8;      // Velocidad más pausada (característica del español peruano)
+            u.pitch = 0.95;    // Tono ligeramente más grave
+            u.volume = 0.9;    // Volumen claro
+
+            speechSynthesis.cancel();
+            
+            // Cambiar a estado hablando
+            cara.classList.remove('escuchando');
+            cara.classList.add('hablando');
+            boca.classList.remove('sonriendo');
+            boca.classList.add('hablando');
+
+            return new Promise(resolve => {
+                u.onend = () => {
+                    cara.classList.remove('hablando');
+                    boca.classList.remove('hablando');
+                    boca.classList.add('sonriendo');
+                    resolve();
+                };
+
+                u.onerror = (error) => {
+                    console.error('Error en síntesis de voz:', error);
+                    cara.classList.remove('hablando');
+                    boca.classList.remove('hablando');
+                    boca.classList.add('sonriendo');
+                    resolve();
+                };
+
+                setTimeout(() => {
+                    speechSynthesis.speak(u);
+                }, 100);
+            });
+        }
+
+        function estadoEscuchando() {
+            cara.classList.remove('hablando');
+            cara.classList.add('escuchando');
+            boca.classList.remove('hablando');
+            boca.classList.add('sonriendo');
+        }
+
+        function estadoNormal() {
+            cara.classList.remove('hablando', 'escuchando');
+            boca.classList.remove('hablando');
+            boca.classList.add('sonriendo');
+        }
+
+        function tieneAPI() {
+            return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        }
+
+        function crearRecon() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const r = new SR();
+            r.lang = "es-PE";
+            r.interimResults = false;
+            r.maxAlternatives = 1;
+
+            r.onstart = () => {
+                estadoEscuchando();
+                ocultarGloboInfo();
+            };
+
+            return r;
+        }
+
+        async function bienvenida() {
+            await hablar("¡Hola! Soy Luisa, tu asistente de elementos químicos. ¿Qué elemento de la tabla periódica quieres conocer Albertino?");
             escucharElemento();
-          });
         }
-      };
-      rec.onerror = () => {
-        hablar("No te entendí. Inténtalo de nuevo.").then(() => escucharElemento());
-      };
-      rec.start();
-    }
 
-    function buscarElemento(fraseLimpia) {
-      // Coincidencia exacta
-      if (ELEMENTOS[fraseLimpia]) return { clave: fraseLimpia, data: ELEMENTOS[fraseLimpia] };
+        function escucharElemento() {
+            if (wakeRec) { try { wakeRec.stop(); } catch(e){} }
+            sesionActiva = true;
 
-      // Coincidencia por palabra: si la frase contiene la clave con límites de palabra
-      for (const clave of Object.keys(ELEMENTOS)) {
-        const re = new RegExp(`\\b${clave}\\b`, 'i');
-        if (re.test(fraseLimpia)) return { clave, data: ELEMENTOS[clave] };
-      }
-      return null;
-    }
-
-    function mostrarElemento(clave, el) {
-      // Hablar solo el nombre en quechua
-      hablar(el.quechua).then(() => {
-        salidaEl.innerHTML = `
-          <div class="ok">
-            <div class="row"><b>Elemento:</b> ${capitalizar(clave)}</div>
-            <div class="row"><b>Nombre en quechua:</b> ${el.quechua}</div>
-            <div class="row"><b>Símbolo:</b> ${el.simbolo}</div>
-            <div class="row"><b>Número atómico:</b> ${el.numero}</div>
-            <div class="row"><b>Masa atómica:</b> ${el.masa || "—"}</div>
-          </div>
-        `;
-        // Preguntar si quiere otro
-        modo = "confirmarOtro";
-        hablar("¿Quieres saber otro elemento de la tabla periódica? Responde sí o no.")
-          .then(() => escucharConfirmacion());
-      });
-    }
-
-    function escucharConfirmacion() {
-      const rec = crearRecon();
-      rec.onresult = (e) => {
-        const resp = normalizar(e.results[0][0].transcript);
-        dichoEl.textContent = e.results[0][0].transcript;
-
-        if (/\bno\b/.test(resp)) {
-          hablar("Tupananchiskama").then(()=> {
-            salidaEl.innerHTML += `<div class="row">👋 Hasta luego en quechua: <b>Tupananchiskama</b></div>`;
-          });
-        } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp)) {
-          hablar("Dime el elemento.").then(()=> escucharElemento());
-        } else {
-          hablar("No entendí. Por favor responde sí o no.").then(()=> escucharConfirmacion());
+            modo = "preguntarElemento";
+            const rec = crearRecon();
+            rec.onresult = (e) => {
+                estadoNormal();
+                const original = e.results[0][0].transcript;
+                const limpio = limpiarStopwords(normalizar(original));
+                
+                mostrarDebug(`Escuché: "${original}"<br>Procesado: "${limpio}"`);
+                
+                const encontrado = buscarElementoMejorado(limpio, original);
+                
+                if (encontrado) {
+                    mostrarElemento(encontrado.clave, encontrado.data, original);
+                } else {
+                    const htmlErr = `<div class="info-err">❌ No encontré el elemento: <b>${original}</b></div>`;
+                    mostrarGloboInfo(htmlErr);
+                    hablar(`No encontré el elemento ${original}. Dime otro, por favor.`).then(() => {
+                        escucharElemento();
+                    });
+                }
+            };
+            rec.onerror = () => {
+                estadoNormal();
+                const htmlErr = `<div class="info-err">❌ No te entendí.</div>`;
+                mostrarGloboInfo(htmlErr);
+                hablar("No te entendí. Inténtalo de nuevo.").then(() => escucharElemento());
+            };
+            rec.start();
         }
-      };
-      rec.onerror = () => {
-        hablar("No te entendí. ¿Quieres otro? di sí o no.").then(()=> escucharConfirmacion());
-      };
-      rec.start();
-    }
 
-    function capitalizar(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+        // =============================================================================
+        // BÚSQUEDA MEJORADA DE ELEMENTOS
+        // =============================================================================
+        
+        function buscarElementoMejorado(fraseLimpia, fraseOriginal) {
+            // 1. Búsqueda exacta
+            if (ELEMENTOS[fraseLimpia]) {
+                return { clave: fraseLimpia, data: ELEMENTOS[fraseLimpia] };
+            }
 
-    // Botón manual para iniciar (necesario en algunos navegadores por permisos)
-    btn.addEventListener('click', async () => {
-      // Pide permiso al micrófono explícitamente (ayuda a que salga el popup)
-      if (navigator.mediaDevices?.getUserMedia) {
-        try { await navigator.mediaDevices.getUserMedia({ audio: true }); } catch {}
-      }
-      bienvenida();
-    });
+            // 2. Buscar por sinónimos
+            for (const [elemento, sinonimos] of Object.entries(SINONIMOS)) {
+                for (const sinonimo of sinonimos) {
+                    const sinonimoNorm = normalizar(sinonimo);
+                    if (fraseLimpia.includes(sinonimoNorm) || sinonimoNorm.includes(fraseLimpia)) {
+                        if (ELEMENTOS[elemento]) {
+                            return { clave: elemento, data: ELEMENTOS[elemento] };
+                        }
+                    }
+                }
+            }
 
-    // Mensaje visual inicial
-    salidaEl.textContent = "Presiona “Hablar”, permite el micrófono y di, por ejemplo: oro, plata, carbono…";
-  </script>
+            // 3. Búsqueda por coincidencia parcial en nombres de elementos
+            for (const clave of Object.keys(ELEMENTOS)) {
+                // Coincidencia exacta de palabra
+                const re = new RegExp(`\\b${clave}\\b`, 'i');
+                if (re.test(fraseLimpia)) {
+                    return { clave, data: ELEMENTOS[clave] };
+                }
+            }
+
+            // 4. Búsqueda más flexible - coincidencia parcial
+            for (const clave of Object.keys(ELEMENTOS)) {
+                // Si la frase contiene el elemento o viceversa
+                if (fraseLimpia.includes(clave) || clave.includes(fraseLimpia)) {
+                    // Solo si la coincidencia es significativa (más del 60% del nombre)
+                    const coincidencia = Math.max(
+                        fraseLimpia.length / clave.length,
+                        clave.length / fraseLimpia.length
+                    );
+                    if (coincidencia > 0.6) {
+                        return { clave, data: ELEMENTOS[clave] };
+                    }
+                }
+            }
+
+            // 5. Búsqueda por distancia de Levenshtein (similitud de cadenas)
+            let mejorCoincidencia = null;
+            let menorDistancia = Infinity;
+            
+            for (const clave of Object.keys(ELEMENTOS)) {
+                const distancia = levenshteinDistance(fraseLimpia, clave);
+                const maxLen = Math.max(fraseLimpia.length, clave.length);
+                const similitud = 1 - (distancia / maxLen);
+                
+                // Si la similitud es mayor al 70%
+                if (similitud > 0.7 && distancia < menorDistancia) {
+                    menorDistancia = distancia;
+                    mejorCoincidencia = { clave, data: ELEMENTOS[clave] };
+                }
+            }
+
+            return mejorCoincidencia;
+        }
+
+        // Función para calcular distancia de Levenshtein (similitud entre cadenas)
+        function levenshteinDistance(str1, str2) {
+            const matrix = [];
+            
+            for (let i = 0; i <= str2.length; i++) {
+                matrix[i] = [i];
+            }
+            
+            for (let j = 0; j <= str1.length; j++) {
+                matrix[0][j] = j;
+            }
+            
+            for (let i = 1; i <= str2.length; i++) {
+                for (let j = 1; j <= str1.length; j++) {
+                    if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+            
+            return matrix[str2.length][str1.length];
+        }
+
+        function mostrarElemento(clave, el, fraseOriginal) {
+            const htmlInfo = `
+                <div class="info-ok">
+                    <div class="info-row">
+                        <span class="info-title">Elemento:</span>
+                        <span class="info-value">${capitalizar(clave)}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Nombre en quechua:</span>
+                        <span class="info-value">${el.quechua}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Símbolo:</span>
+                        <span class="info-value">${el.simbolo}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Número atómico:</span>
+                        <span class="info-value">${el.numero}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-title">Masa atómica:</span>
+                        <span class="info-value">${el.masa || "—"}</span>
+                    </div>
+                </div>
+            `;
+            mostrarGloboInfo(htmlInfo);
+            
+            hablar(`El elemento ${capitalizar(clave)} se dice ${el.quechua} en quechua.`).then(() => {
+                modo = "confirmarOtro";
+                hablar("¿Quieres saber sobre otro elemento de la tabla periódica? Responde sí o no.")
+                    .then(() => escucharConfirmacion());
+            });
+        }
+
+        function escucharConfirmacion() {
+            const rec = crearRecon();
+            rec.onresult = (e) => {
+                estadoNormal();
+                const resp = normalizar(e.results[0][0].transcript);
+                
+                const htmlDicho = `<div class="info-row"><span class="info-title">Lo que dijiste:</span><span class="info-value">${e.results[0][0].transcript}</span></div>`;
+                mostrarGloboInfo(htmlDicho);
+
+                if (/\bno\b/.test(resp)) {
+                    hablar("Tupananchiskama, que tengas un buen día.").then(()=> {
+                        const htmlFinal = `<div class="info-row"><span class="info-title">👋 Hasta luego:</span><span class="info-value"><b>Tupananchiskama</b> (hasta pronto en quechua)</span></div>`;
+                        mostrarGloboInfo(htmlFinal);
+                        sesionActiva = false;
+                        reactivarWakeWord();
+                    });
+                } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp)) {
+                    hablar("Perfecto. Dime qué elemento quieres conocer.").then(()=> escucharElemento());
+                } else {
+                    hablar("No entendí tu respuesta. Por favor responde sí o no.").then(()=> escucharConfirmacion());
+                }
+            };
+            rec.onerror = () => {
+                estadoNormal();
+                const htmlErr = `<div class="info-err">❌ No te entendí.</div>`;
+                mostrarGloboInfo(htmlErr);
+                hablar("No te entendí. ¿Quieres consultar otro elemento? Di sí o no.").then(()=> escucharConfirmacion());
+            };
+            rec.start();
+        }
+
+        function capitalizar(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        function mostrarGloboInfo(html) {
+            globoInfo.innerHTML = html;
+            globoInfo.classList.add('visible');
+        }
+
+        function ocultarGloboInfo() {
+            globoInfo.classList.remove('visible');
+            setTimeout(() => {
+                globoInfo.innerHTML = '';
+            }, 400);
+        }
+
+        function iniciarWakeWord() {
+            if (!tieneAPI()) return;
+            if (wakeRec) return;
+
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            wakeRec = new SR();
+            wakeRec.lang = "es-PE";
+            wakeRec.interimResults = false;
+            wakeRec.continuous = true;
+
+            wakeRec.onstart = () => {
+                estadoEscuchando();
+                ocultarGloboInfo();
+            };
+
+            wakeRec.onresult = (e) => {
+                const i = e.results.length - 1;
+                const original = e.results[i][0].transcript;
+                const tx = normalizar(original);
+                
+                // CAMBIO PRINCIPAL: Nueva palabra de activación "Luisa"
+                if (!sesionActiva && (/\bluisa\b/.test(tx) || /\luisa/.test(tx))) {
+                    sesionActiva = true;
+                    try { wakeRec.stop(); } catch(e){}
+                    bienvenida();
+                }
+            };
+            wakeRec.onend = () => {
+                if (!sesionActiva) {
+                    setTimeout(() => {
+                        try { wakeRec.start(); } catch(e){}
+                    }, 300);
+                }
+            };
+
+            if (navigator.mediaDevices?.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(() => { try { wakeRec.start(); } catch(e){} })
+                    .catch(() => {
+                        console.log('Micrófono no disponible para wake word');
+                    });
+            } else {
+                try { wakeRec.start(); } catch(e){}
+            }
+        }
+
+        function reactivarWakeWord() {
+            if (wakeRec && !sesionActiva) {
+                try { wakeRec.start(); } catch(e){}
+            }
+        }
+
+        // Inicializar todo cuando se carga la página
+        document.addEventListener('DOMContentLoaded', async () => {
+            await inicializarVoces();
+            iniciarWakeWord();
+            mostrarDebug("Sistema iniciado - Di 'Luisa' para comenzar");
+        });
+
+    </script>
 </body>
 </html>
