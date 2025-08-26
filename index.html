@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔬 BOT ALBERTINO</title>
     <link rel="icon" href="School LAS.png">
     <style>
@@ -14,19 +15,22 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #e7e437 0%, #51e43d 100%);
             margin: 0;
-            padding: 32px;
+            padding: 16px;
             text-align: center;
             animation: backgroundShift 10s ease-in-out infinite alternate;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         @keyframes backgroundShift {
             0% { background: linear-gradient(135deg, #ced12e 0%, #55dd3a 100%); }
             100% { background: linear-gradient(135deg, #28ee53 0%, #d1ee4f 100%); }
         }
+
         h1 { 
             margin-top: 0; 
             color: white; 
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             font-weight: 700;
             text-shadow: 0 4px 20px rgba(0,0,0,0.3);
             animation: titleFloat 3s ease-in-out infinite alternate;
@@ -37,11 +41,44 @@
             100% { transform: translateY(-8px); }
         }
 
+        /* Botón de inicio mejorado para móvil */
+        #btn-iniciar {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        #btn-iniciar:hover {
+            background: linear-gradient(45deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        #btn-iniciar:active {
+            transform: translateY(0);
+        }
+
+        #btn-iniciar.oculto {
+            display: none;
+        }
+
         /* Estilos de la cara mejorada */
         #cara-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: min(280px, 70vw);
+            height: min(280px, 70vw);
             margin: 20px auto;
             animation: containerFloat 4s ease-in-out infinite alternate;
         }
@@ -52,8 +89,8 @@
         }
         
         .cara {
-            width: 300px;
-            height: 300px;
+            width: 100%;
+            height: 100%;
             background: transparent;
             border-radius: 50%;
             position: relative;
@@ -64,21 +101,21 @@
         /* Cejas */
         .ceja {
             position: absolute;
-            width: 90px;
-            height: 20px;
+            width: 30%;
+            height: 7%;
             background: linear-gradient(45deg, #2c3e50, #34495e);
             border-radius: 5px;
-            top: 0px;
+            top: 0;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .ceja.izquierda { 
-            left: 35px; 
+            left: 12%; 
             transform: rotate(-15deg);
             animation: eyebrowShimmer 3s ease-in-out infinite alternate;
         }
         .ceja.derecha { 
-            right: 35px; 
+            right: 12%; 
             transform: rotate(15deg);
             animation: eyebrowShimmer 3s ease-in-out infinite alternate 0.5s;
         }
@@ -96,23 +133,23 @@
 
         /* Ojos */
         .ojo {
-            width: 100px;
-            height: 100px;
+            width: 33%;
+            height: 33%;
             background: radial-gradient(circle at 30% 30%, #ffffff, #f8f9fa);
             border-radius: 50%;
             position: absolute;
-            top: 35px;
+            top: 12%;
             border: 3px solid #2c3e50;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 15px rgba(0,0,0,0.2);
         }
         .ojo.izquierdo { 
-            left: 35px; 
+            left: 12%; 
             animation: eyeGlow 2s ease-in-out infinite alternate;
         }
         .ojo.derecho { 
-            right: 35px; 
+            right: 12%; 
             animation: eyeGlow 2s ease-in-out infinite alternate 0.3s;
         }
         
@@ -122,8 +159,8 @@
         }
         
         .pupila {
-            width: 28px;
-            height: 28px;
+            width: 28%;
+            height: 28%;
             background: radial-gradient(circle at 30% 30%, #2c3e50, #000);
             border-radius: 50%;
             position: absolute;
@@ -161,7 +198,7 @@
         /* Boca - Estado normal/escuchando */
         .boca {
             position: absolute;
-            bottom: 70px;
+            bottom: 25%;
             left: 50%;
             transform: translateX(-50%);
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -169,8 +206,8 @@
         }
 
         .boca.sonriendo {
-            width: 190px;
-            height: 55px;
+            width: 65%;
+            height: 18%;
             border: 4px solid #2c3e50;
             border-top: none;
             border-radius: 0 0 90px 90px;
@@ -190,8 +227,8 @@
         }
 
         .boca.hablando {
-            width: 80px;
-            height: 90px;
+            width: 27%;
+            height: 30%;
             background: radial-gradient(circle, #2c3e50, #000);
             border-radius: 50%;
             animation: speakAnimation 0.3s infinite alternate;
@@ -216,12 +253,13 @@
             left: 50%;
             transform: translateX(-50%);
             min-width: 320px;
+            max-width: 90vw;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 25px;
             padding: 20px 24px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            font-size: 14px;
+            font-size: clamp(12px, 3vw, 14px);
             text-align: left;
             opacity: 0;
             transform: translateX(-50%) translateY(-20px) scale(0.8);
@@ -236,7 +274,6 @@
             100% { transform: translateX(-50%) translateY(-20px) scale(0.8) rotate(0.5deg); }
         }
 
-        /* Efecto nube para el globo */
         #globo-info::before,
         #globo-info::after {
             content: '';
@@ -269,6 +306,7 @@
             margin: 8px 0; 
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
         .info-title { 
             font-weight: bold; 
@@ -286,15 +324,51 @@
         /* Indicador de debug */
         .debug-info {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 10px;
+            padding: 8px 12px;
             border-radius: 8px;
-            font-size: 12px;
-            max-width: 300px;
-            opacity: 0.7;
+            font-size: clamp(10px, 2.5vw, 12px);
+            max-width: 280px;
+            opacity: 0.8;
+            z-index: 1000;
+        }
+
+        /* Botón de micrófono para móvil */
+        #btn-mic {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        #btn-mic:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+        }
+
+        #btn-mic.activo {
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
         }
 
         /* Animación de parpadeo sutil */
@@ -305,13 +379,30 @@
         .cara:not(.hablando) .ojo {
             animation: parpadeo-sutil 4s infinite;
         }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body { padding: 8px; }
+            #cara-container { 
+                width: min(250px, 80vw); 
+                height: min(250px, 80vw); 
+            }
+            #globo-info {
+                min-width: 280px;
+                max-width: 95vw;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px) scale(0.8);
+            }
+        }
     </style>
 </head>
 <body>
     <h1>🔬 ElementBot</h1>
 
+    <button id="btn-iniciar">🎤 Iniciar Bot</button>
+
     <div class="debug-info" id="debug-info">
-        Reconocimiento de voz listo...
+        Toca "Iniciar Bot" para comenzar
     </div>
 
     <div id="cara-container">
@@ -324,6 +415,8 @@
             <div class="boca sonriendo"></div>
         </div>
     </div>
+
+    <button id="btn-mic">🎤</button>
 
     <script>
        const ELEMENTOS = {
@@ -449,7 +542,6 @@
 
         // SISTEMA DE SINÓNIMOS Y VARIACIONES PARA MEJORAR RECONOCIMIENTO
         const SINONIMOS = {
-            // Variaciones comunes de pronunciación
             "germanio": ["jemanio", "hermano", "hermaniyo", "jermanio"],
             "prometio": ["promethio", "prometeo", "promiteyo"],
             "terbio": ["terbiyo", "tervio", "terbium"],
@@ -520,11 +612,18 @@
         const debugInfo = document.getElementById('debug-info');
         const cara = document.querySelector('.cara');
         const boca = document.querySelector('.boca');
+        const btnIniciar = document.getElementById('btn-iniciar');
+        const btnMic = document.getElementById('btn-mic');
 
         let sesionActiva = false;
-        let wakeRec = null;
+        let reconocimientoActual = null;
         let mejorVoz = null;
         let vocesDisponibles = [];
+        let sistemaIniciado = false;
+        let esMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        let esBrave = navigator.userAgent.includes('Brave') || (navigator.brave && navigator.brave.isBrave());
+        let intentosReconexion = 0;
+        let tiempoEsperaReconexion = 1000;
 
         // =============================================================================
         // SISTEMA DE VOCES MEJORADO - OPTIMIZADO PARA VELOCIDAD
@@ -536,65 +635,46 @@
                     vocesDisponibles = speechSynthesis.getVoices();
                     
                     if (vocesDisponibles.length === 0) {
-                        setTimeout(cargarVoces, 50); // Reducido de 100ms a 50ms
+                        setTimeout(cargarVoces, 100);
                         return;
                     }
 
-                    // Filtrar voces en español con prioridad peruana
                     const vocesEspanol = vocesDisponibles.filter(voz => {
                         const lang = voz.lang.toLowerCase();
                         const nombre = voz.name.toLowerCase();
                         return lang.includes('es') || lang.includes('spa') || nombre.includes('spanish');
                     });
 
-                    // Priorizar voces peruanas y latinoamericanas
                     const prioridades = [
-                        // Máxima prioridad: voces peruanas específicas
                         /peru|pe[-_]|es[-_]pe/i,
-                        // Alta prioridad: voces latinoamericanas neutras
                         /latin|america|neutral|es[-_](co|mx|ar|cl|ve|ec)/i,
-                        // Voces naturales y premium
                         /neural|premium|enhanced|natural|google|microsoft.*spanish/i,
-                        // Evitar voces españolas (españa)
                         /^(?!.*es[-_]es).*es/i,
-                        // Preferir voces femeninas para mejor claridad
                         /female|mujer|woman|maria|carmen|sofia|elena|lucia|paloma/i
                     ];
 
                     let mejorPuntuacion = -1;
                     mejorVoz = null;
 
-                    console.log("Voces disponibles:", vocesEspanol.map(v => ({
-                        nombre: v.name, 
-                        idioma: v.lang, 
-                        local: v.localService
-                    })));
-
                     vocesEspanol.forEach(voz => {
                         let puntuacion = 0;
                         
-                        // Aplicar prioridades
                         prioridades.forEach((patron, indice) => {
                             if (patron.test(voz.name) || patron.test(voz.lang)) {
                                 puntuacion += (prioridades.length - indice) * 10;
                             }
                         });
 
-                        // Bonificaciones adicionales
                         if (voz.localService) puntuacion += 5;
                         if (/female|woman|f$/i.test(voz.name)) puntuacion += 3;
                         
-                        // Penalizar voces españolas de España
                         if (/es[-_]es|spain|españa/i.test(voz.lang) || /es[-_]es/i.test(voz.name)) {
                             puntuacion -= 15;
                         }
                         
-                        // Penalizar voces robóticas
                         if (/robotic|microsoft.*sam|default|basic/i.test(voz.name)) {
                             puntuacion -= 5;
                         }
-
-                        console.log(`Voz: ${voz.name} (${voz.lang}) - Puntuación: ${puntuacion}`);
 
                         if (puntuacion > mejorPuntuacion) {
                             mejorPuntuacion = puntuacion;
@@ -602,9 +682,7 @@
                         }
                     });
 
-                    // Fallback si no encontramos ninguna voz
                     if (!mejorVoz && vocesDisponibles.length > 0) {
-                        // Buscar cualquier voz que no sea española de España
                         const vozFallback = vocesEspanol.find(v => 
                             !(/es[-_]es|spain|españa/i.test(v.lang))
                         ) || vocesEspanol[0];
@@ -624,7 +702,7 @@
                     cargarVoces();
                 } else {
                     speechSynthesis.addEventListener('voiceschanged', cargarVoces);
-                    setTimeout(cargarVoces, 500); // Reducido de 1000ms a 500ms
+                    setTimeout(cargarVoces, 1000);
                 }
             });
         }
@@ -645,59 +723,52 @@
 
         function mostrarDebug(mensaje) {
             debugInfo.innerHTML = mensaje;
-            setTimeout(() => {
-                debugInfo.innerHTML = "Escuchando...";
-            }, 2000); // Reducido de 3000ms a 2000ms
         }
 
         // =============================================================================
-        // FUNCIÓN DE HABLA OPTIMIZADA PARA VELOCIDAD
+        // FUNCIÓN DE HABLA OPTIMIZADA
         // =============================================================================
         async function hablar(texto, lang="es-PE") {
-            const u = new SpeechSynthesisUtterance(texto);
-            
-            // Aplicar la mejor voz disponible
-            if (mejorVoz) {
-                u.voice = mejorVoz;
-                u.lang = mejorVoz.lang;
-            } else {
-                // Configurar idioma peruano como fallback
-                u.lang = "es-PE";
-            }
-
-            // CONFIGURACIONES OPTIMIZADAS PARA MAYOR VELOCIDAD
-            u.rate = 1.0;      // Aumentado de 0.8 a 1.1 (más rápido)
-            u.pitch = 1.0;     // Aumentado de 0.95 a 1.0 (tono más natural)
-            u.volume = 0.95;   // Aumentado de 0.9 a 0.95 (más claro)
-
-            speechSynthesis.cancel();
-            
-            // Cambiar a estado hablando
-            cara.classList.remove('escuchando');
-            cara.classList.add('hablando');
-            boca.classList.remove('sonriendo');
-            boca.classList.add('hablando');
-
-            return new Promise(resolve => {
-                u.onend = () => {
-                    cara.classList.remove('hablando');
-                    boca.classList.remove('hablando');
-                    boca.classList.add('sonriendo');
-                    resolve();
-                };
-
-                u.onerror = (error) => {
-                    console.error('Error en síntesis de voz:', error);
-                    cara.classList.remove('hablando');
-                    boca.classList.remove('hablando');
-                    boca.classList.add('sonriendo');
-                    resolve();
-                };
-
-                // Reducido el tiempo de espera de 100ms a 50ms
+            return new Promise((resolve) => {
+                // Cancelar cualquier síntesis previa
+                speechSynthesis.cancel();
+                
                 setTimeout(() => {
+                    const u = new SpeechSynthesisUtterance(texto);
+                    
+                    if (mejorVoz) {
+                        u.voice = mejorVoz;
+                        u.lang = mejorVoz.lang;
+                    } else {
+                        u.lang = "es-PE";
+                    }
+
+                    u.rate = 1.0;
+                    u.pitch = 1.0;
+                    u.volume = 0.95;
+
+                    cara.classList.remove('escuchando');
+                    cara.classList.add('hablando');
+                    boca.classList.remove('sonriendo');
+                    boca.classList.add('hablando');
+
+                    u.onend = () => {
+                        cara.classList.remove('hablando');
+                        boca.classList.remove('hablando');
+                        boca.classList.add('sonriendo');
+                        resolve();
+                    };
+
+                    u.onerror = (error) => {
+                        console.error('Error en síntesis de voz:', error);
+                        cara.classList.remove('hablando');
+                        boca.classList.remove('hablando');
+                        boca.classList.add('sonriendo');
+                        resolve();
+                    };
+
                     speechSynthesis.speak(u);
-                }, 50);
+                }, 100);
             });
         }
 
@@ -706,12 +777,14 @@
             cara.classList.add('escuchando');
             boca.classList.remove('hablando');
             boca.classList.add('sonriendo');
+            btnMic.classList.add('activo');
         }
 
         function estadoNormal() {
             cara.classList.remove('hablando', 'escuchando');
             boca.classList.remove('hablando');
             boca.classList.add('sonriendo');
+            btnMic.classList.remove('activo');
         }
 
         function tieneAPI() {
@@ -719,112 +792,449 @@
         }
 
         // =============================================================================
-        // RECONOCIMIENTO DE VOZ OPTIMIZADO PARA MEJOR COMPRENSIÓN
+        // SOLICITAR PERMISOS DE MICRÓFONO MEJORADO ESPECÍFICAMENTE PARA BRAVE
+        // =============================================================================
+        async function solicitarPermisosMicrofono() {
+            // Verificar si ya tenemos permisos
+            if (navigator.permissions) {
+                try {
+                    const permission = await navigator.permissions.query({ name: 'microphone' });
+                    if (permission.state === 'granted') {
+                        return true;
+                    }
+                } catch (e) {
+                    // Continuar con el método tradicional
+                }
+            }
+
+            try {
+                // Configuración específica para Brave
+                const constraints = {
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100
+                    }
+                };
+
+                // En Brave, a veces necesitamos ser más específicos
+                if (esBrave) {
+                    constraints.audio.autoGainControl = true;
+                    constraints.audio.channelCount = 1;
+                }
+
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                // Cerrar el stream inmediatamente
+                stream.getTracks().forEach(track => track.stop());
+                
+                mostrarDebug('Permisos de micrófono concedidos');
+                return true;
+                
+            } catch (error) {
+                console.error('Error al solicitar permisos de micrófono:', error);
+                
+                let mensajeError = 'Necesito permisos de micrófono para funcionar';
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    if (esBrave) {
+                        mensajeError = 'En Brave: Ve a Configuración del escudo > Desactivar protecciones para esta página, luego permite el micrófono';
+                    } else {
+                        mensajeError = 'Permisos de micrófono denegados. Por favor, permite el acceso y recarga la página.';
+                    }
+                } else if (error.name === 'NotFoundError') {
+                    mensajeError = 'No se encontró micrófono. Verifica que tu dispositivo tenga uno.';
+                } else if (error.name === 'NotReadableError') {
+                    mensajeError = 'Micrófono ocupado por otra aplicación. Ciérrala e inténtalo de nuevo.';
+                }
+                
+                mostrarDebug(mensajeError);
+                const htmlErr = `<div class="info-err">${mensajeError}</div>`;
+                mostrarGloboInfo(htmlErr);
+                return false;
+            }
+        }
+
+        // =============================================================================
+        // RECONOCIMIENTO DE VOZ MEJORADO ESPECÍFICAMENTE PARA BRAVE Y EDGE
         // =============================================================================
         function crearRecon() {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                mostrarDebug('Reconocimiento de voz no disponible en este dispositivo');
+                return null;
+            }
+
             const r = new SR();
-            r.lang = "es-PE";
-            r.interimResults = true;  // Cambiado de false a true para respuesta más rápida
-            r.maxAlternatives = 3;    // Aumentado de 1 a 3 para mejor reconocimiento
-            r.continuous = false;     // Mantener en false para sesiones específicas
+            
+            // Configuración específica según el navegador
+            if (esBrave) {
+                // Configuración específica para Brave
+                r.lang = "es-ES"; // Brave funciona mejor con es-ES
+                r.interimResults = false;
+                r.maxAlternatives = 1;
+                r.continuous = false;
+                
+                // Brave a veces necesita más tiempo
+                r.grammars = null; // Evitar uso de gramáticas en Brave
+                
+            } else if (navigator.userAgent.includes('Edge') || navigator.userAgent.includes('Edg')) {
+                // Configuración específica para Edge
+                r.lang = "es-PE";
+                r.interimResults = false;
+                r.maxAlternatives = 3; // Edge maneja mejor múltiples alternativas
+                r.continuous = false;
+                
+            } else {
+                // Configuración para Chrome y otros
+                r.lang = "es-ES";
+                r.interimResults = false;
+                r.maxAlternatives = 1;
+                r.continuous = false;
+            }
 
             r.onstart = () => {
                 estadoEscuchando();
                 ocultarGloboInfo();
+                mostrarDebug('Escuchando... Habla ahora');
+                intentosReconexion = 0; // Resetear contador de reconexiones
+            };
+
+            r.onspeechstart = () => {
+                mostrarDebug('Te escucho...');
+            };
+
+            r.onspeechend = () => {
+                mostrarDebug('Procesando...');
             };
 
             return r;
         }
 
-        async function bienvenida() {
-            await hablar("Hola, soy Luisa. ¿Qué elemento químico quieres conocer Albertino?"); // Mensaje más corto
-            escucharElemento();
-        }
-
-        function escucharElemento() {
-            if (wakeRec) { try { wakeRec.stop(); } catch(e){} }
-            sesionActiva = true;
-
-            modo = "preguntarElemento";
-            const rec = crearRecon();
+        // =============================================================================
+        // INICIALIZACIÓN DEL SISTEMA MEJORADA
+        // =============================================================================
+        async function iniciarSistema() {
+            if (sistemaIniciado) return;
             
-            // Variables para manejo de resultados intermedios
-            let timeoutId = null;
-            let ultimoResultado = "";
+            mostrarDebug('Inicializando sistema...');
+            btnIniciar.textContent = 'Cargando...';
+            btnIniciar.disabled = true;
 
-            rec.onresult = (e) => {
-                // Limpiar timeout anterior
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                }
+            // Verificar soporte de API primero
+            if (!tieneAPI()) {
+                mostrarDebug('Reconocimiento de voz no soportado en este navegador');
+                const htmlErr = `<div class="info-err">Tu navegador no soporta reconocimiento de voz. Prueba con Chrome, Edge o Firefox.</div>`;
+                mostrarGloboInfo(htmlErr);
+                btnIniciar.textContent = 'No Compatible';
+                return;
+            }
 
-                // Obtener el resultado más reciente
-                const resultado = e.results[e.results.length - 1];
-                const transcript = resultado[0].transcript;
-                
-                // Si es un resultado final, procesarlo inmediatamente
-                if (resultado.isFinal) {
-                    procesarResultado(transcript);
-                } else {
-                    // Si es resultado intermedio, esperar un poco por si hay más
-                    ultimoResultado = transcript;
-                    timeoutId = setTimeout(() => {
-                        if (ultimoResultado.length > 3) { // Solo procesar si tiene contenido útil
-                            procesarResultado(ultimoResultado);
-                        }
-                    }, 800); // Reducido de tiempo de espera
-                }
-            };
+            // Mensaje específico para Brave
+            if (esBrave) {
+                mostrarDebug('Brave detectado - Configurando compatibilidad...');
+            }
 
-            function procesarResultado(original) {
-                estadoNormal();
-                const limpio = limpiarStopwords(normalizar(original));
+            // Inicializar voces primero
+            await inicializarVoces();
+
+            // Solicitar permisos de micrófono con reintentos específicos para Brave
+            let intentosPermisos = 0;
+            let tienePermisos = false;
+            const maxIntentos = esBrave ? 2 : 3; // Menos intentos en Brave para evitar bloqueos
+            
+            while (intentosPermisos < maxIntentos && !tienePermisos) {
+                intentosPermisos++;
+                mostrarDebug(`Solicitando permisos de micrófono (intento ${intentosPermisos}/${maxIntentos})...`);
                 
-                mostrarDebug(`Escuché: "${original}"<br>Procesado: "${limpio}"`);
-                
-                const encontrado = buscarElementoMejorado(limpio, original);
-                
-                if (encontrado) {
-                    mostrarElemento(encontrado.clave, encontrado.data, original);
-                } else {
-                    const htmlErr = `<div class="info-err">❌ No encontré: <b>${original}</b></div>`;
-                    mostrarGloboInfo(htmlErr);
-                    hablar(`No encontré ${original}. Dime otro elemento.`).then(() => { // Mensaje más corto
-                        escucharElemento();
-                    });
+                try {
+                    tienePermisos = await solicitarPermisosMicrofono();
+                    if (tienePermisos) break;
+                    
+                    // Esperar un momento antes del siguiente intento
+                    await new Promise(resolve => setTimeout(resolve, esBrave ? 2000 : 1000));
+                    
+                } catch (error) {
+                    console.error('Error en intento de permisos:', error);
                 }
             }
 
-            rec.onerror = (error) => {
-                estadoNormal();
-                console.log("Error de reconocimiento:", error);
+            if (!tienePermisos) {
+                mostrarDebug('No se pudieron obtener permisos de micrófono');
+                let mensaje = 'Sin permisos de micrófono';
+                let instrucciones = '1. Haz clic en el ícono del micrófono/candado en la barra de direcciones<br>2. Permite el acceso al micrófono<br>3. Recarga la página';
                 
-                // Manejo más específico de errores
-                if (error.error === 'no-speech') {
-                    const htmlErr = `<div class="info-err">⏱️ No escuché nada</div>`;
-                    mostrarGloboInfo(htmlErr);
-                    hablar("No te escuché. Inténtalo de nuevo.").then(() => escucharElemento());
-                } else if (error.error === 'network') {
-                    const htmlErr = `<div class="info-err">🌐 Error de conexión</div>`;
-                    mostrarGloboInfo(htmlErr);
-                    hablar("Problema de conexión. Inténtalo de nuevo.").then(() => escucharElemento());
-                } else {
-                    const htmlErr = `<div class="info-err">❌ Error de audio</div>`;
-                    mostrarGloboInfo(htmlErr);
-                    hablar("Error de audio. Inténtalo de nuevo.").then(() => escucharElemento());
+                if (esBrave) {
+                    instrucciones = '1. Haz clic en el escudo de Brave en la barra de direcciones<br>2. Desactiva las protecciones para esta página<br>3. Permite el micrófono cuando se solicite<br>4. Recarga la página';
                 }
-            };
+                
+                const htmlErr = `<div class="info-err">
+                    <strong>${mensaje}</strong><br>
+                    <small>${instrucciones}</small>
+                </div>`;
+                mostrarGloboInfo(htmlErr);
+                btnIniciar.textContent = 'Reintentar';
+                btnIniciar.disabled = false;
+                return;
+            }
 
-            rec.onspeechend = () => {
-                // Procesar automáticamente si tenemos resultado intermedio
-                if (ultimoResultado && ultimoResultado.length > 2) {
-                    if (timeoutId) clearTimeout(timeoutId);
-                    procesarResultado(ultimoResultado);
+            sistemaIniciado = true;
+            
+            btnIniciar.classList.add('oculto');
+            btnMic.style.display = 'block';
+            
+            mostrarDebug('Sistema listo - Pregunta por un elemento químico');
+            
+            // Saludo inicial
+            try {
+                await hablar("Hola, soy Luisa. ¿Qué elemento químico quieres conocer?");
+                mostrarDebug('Toca el botón del micrófono y pregunta por un elemento');
+            } catch (error) {
+                console.error('Error en saludo inicial:', error);
+                mostrarDebug('Sistema listo. Toca el micrófono para comenzar');
+            }
+        }
+
+        // =============================================================================
+        // FUNCIONES DE ESCUCHA MEJORADAS CON RECUPERACIÓN DE ERRORES
+        // =============================================================================
+        function escucharElemento() {
+            if (reconocimientoActual) {
+                try { 
+                    reconocimientoActual.abort();
+                    reconocimientoActual = null;
+                } catch(e) {
+                    console.log('Error al detener reconocimiento anterior:', e);
                 }
-            };
+            }
+            
+            // Esperar un momento antes de crear nuevo reconocimiento
+            setTimeout(() => {
+                sesionActiva = true;
+                modo = "preguntarElemento";
+                
+                const rec = crearRecon();
+                if (!rec) return;
+                
+                reconocimientoActual = rec;
 
-            rec.start();
+                rec.onresult = (e) => {
+                    if (e.results.length > 0) {
+                        let mejorResultado = "";
+                        let mejorConfianza = 0;
+                        
+                        // En Edge, revisar múltiples alternativas si están disponibles
+                        for (let i = 0; i < e.results[0].length; i++) {
+                            const alternativa = e.results[0][i];
+                            if (alternativa.confidence > mejorConfianza) {
+                                mejorConfianza = alternativa.confidence;
+                                mejorResultado = alternativa.transcript;
+                            }
+                        }
+                        
+                        if (!mejorResultado && e.results[0][0]) {
+                            mejorResultado = e.results[0][0].transcript;
+                        }
+                        
+                        if (mejorResultado) {
+                            procesarElemento(mejorResultado);
+                        }
+                    }
+                };
+
+                rec.onerror = (error) => {
+                    estadoNormal();
+                    console.error("Error de reconocimiento:", error);
+                    
+                    let mensajeError = "Error de audio";
+                    let solucion = "Toca el botón para reintentar";
+                    let puedeReintentar = true;
+                    
+                    switch(error.error) {
+                        case 'no-speech':
+                            mensajeError = "No escuché nada";
+                            solucion = "Habla más fuerte y claro. Toca para reintentar";
+                            break;
+                        case 'network':
+                            if (esBrave) {
+                                mensajeError = "Error de red en Brave";
+                                solucion = "Desactiva el escudo de Brave para esta página o usa Chrome/Edge";
+                                puedeReintentar = false;
+                            } else {
+                                mensajeError = "Error de red";
+                                solucion = "Verifica tu conexión a internet. Toca para reintentar";
+                            }
+                            break;
+                        case 'not-allowed':
+                            mensajeError = "Permisos de micrófono denegados";
+                            solucion = "Permite el micrófono en la barra de direcciones y recarga";
+                            puedeReintentar = false;
+                            break;
+                        case 'service-not-allowed':
+                            if (esBrave) {
+                                mensajeError = "Servicio bloqueado por Brave";
+                                solucion = "Desactiva el escudo de Brave para esta página";
+                            } else {
+                                mensajeError = "Servicio no permitido";
+                                solucion = "Verifica la conexión HTTPS. Toca para reintentar";
+                            }
+                            break;
+                        case 'bad-grammar':
+                        case 'language-not-supported':
+                            mensajeError = "No pude entender";
+                            solucion = "Habla más claro. Toca para reintentar";
+                            break;
+                        default:
+                            if (esBrave) {
+                                mensajeError = "Problema en Brave";
+                                solucion = "Desactiva el escudo de Brave o usa Chrome/Edge";
+                            }
+                            break;
+                    }
+                    
+                    const htmlErr = `<div class="info-err">${mensajeError}<br><small>${solucion}</small></div>`;
+                    mostrarGloboInfo(htmlErr);
+                    mostrarDebug(`${mensajeError}. ${solucion}`);
+                    
+                    // Implementar reintento automático para ciertos errores
+                    if (puedeReintentar && (error.error === 'no-speech' || error.error === 'aborted')) {
+                        intentosReconexion++;
+                        if (intentosReconexion < 3) {
+                            setTimeout(() => {
+                                mostrarDebug(`Reintentando automáticamente (${intentosReconexion}/3)...`);
+                                escucharElemento();
+                            }, tiempoEsperaReconexion);
+                            tiempoEsperaReconexion *= 1.5; // Incrementar tiempo de espera
+                        }
+                    }
+                };
+
+                rec.onend = () => {
+                    estadoNormal();
+                    reconocimientoActual = null;
+                };
+
+                try {
+                    rec.start();
+                } catch (error) {
+                    console.error('Error al iniciar reconocimiento:', error);
+                    mostrarDebug('Error al iniciar micrófono. Toca para reintentar');
+                    estadoNormal();
+                    reconocimientoActual = null;
+                }
+            }, 200); // Esperar 200ms antes de crear nuevo reconocimiento
+        }
+
+        function procesarElemento(original) {
+            estadoNormal();
+            const limpio = limpiarStopwords(normalizar(original));
+            
+            mostrarDebug(`Escuché: "${original}"`);
+            
+            const encontrado = buscarElementoMejorado(limpio, original);
+            
+            if (encontrado) {
+                mostrarElemento(encontrado.clave, encontrado.data, original);
+            } else {
+                const htmlErr = `<div class="info-err">No encontré: <b>${original}</b></div>`;
+                mostrarGloboInfo(htmlErr);
+                hablar(`No encontré ${original}. Dime otro elemento.`).then(() => {
+                    mostrarDebug('Toca el botón para preguntar otro elemento');
+                });
+            }
+            
+            // Resetear contadores de reconexión tras éxito
+            intentosReconexion = 0;
+            tiempoEsperaReconexion = 1000;
+        }
+
+        function escucharConfirmacion() {
+            if (reconocimientoActual) {
+                try { 
+                    reconocimientoActual.abort();
+                    reconocimientoActual = null;
+                } catch(e) {}
+            }
+            
+            setTimeout(() => {
+                const rec = crearRecon();
+                if (!rec) return;
+                
+                reconocimientoActual = rec;
+
+                rec.onresult = (e) => {
+                    if (e.results.length > 0) {
+                        const respuesta = e.results[0][0].transcript;
+                        procesarConfirmacion(respuesta);
+                    }
+                };
+
+                rec.onerror = (error) => {
+                    estadoNormal();
+                    console.error("Error en confirmación:", error);
+                    
+                    // Manejar error específico de Edge donde se queda en loop
+                    if (error.error === 'no-speech' && navigator.userAgent.includes('Edge')) {
+                        hablar("No escuché respuesta. ¿Quieres otro elemento? Di sí o no.").then(() => {
+                            mostrarDebug('Di "sí" o "no"');
+                        });
+                        return;
+                    }
+                    
+                    const htmlErr = `<div class="info-err">No entendí</div>`;
+                    mostrarGloboInfo(htmlErr);
+                    hablar("¿Otro elemento? Di sí o no.").then(() => {
+                        mostrarDebug('Di "sí" o "no"');
+                    });
+                };
+
+                rec.onend = () => {
+                    estadoNormal();
+                    reconocimientoActual = null;
+                };
+
+                try {
+                    rec.start();
+                } catch (error) {
+                    estadoNormal();
+                    mostrarDebug('Error al iniciar micrófono');
+                    reconocimientoActual = null;
+                }
+            }, 200);
+        }
+
+        function procesarConfirmacion(respuesta) {
+            estadoNormal();
+            const resp = normalizar(respuesta);
+            
+            const htmlDicho = `<div class="info-row"><span class="info-title">Dijiste:</span><span class="info-value">${respuesta}</span></div>`;
+            mostrarGloboInfo(htmlDicho);
+
+            if (/\bno\b/.test(resp)) {
+                hablar("Nos vemos pronto, Albertino. Tupananchiskama.").then(() => {
+                    const htmlFinal = `<div class="info-row"><span class="info-title">Hasta luego:</span><span class="info-value"><b>Tupananchiskama</b></span></div>`;
+                    mostrarGloboInfo(htmlFinal);
+                    sesionActiva = false;
+                    mostrarDebug('Toca "Iniciar Bot" para comenzar de nuevo');
+                    btnIniciar.classList.remove('oculto');
+                    btnMic.style.display = 'none';
+                    sistemaIniciado = false;
+                    // Reset variables
+                    modo = "preguntarElemento";
+                    intentosReconexion = 0;
+                    tiempoEsperaReconexion = 1000;
+                });
+            } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp) || /\bbueno\b/.test(resp)) {
+                // CAMBIO CRÍTICO: Resetear modo antes de preguntar por otro elemento
+                modo = "preguntarElemento";
+                hablar("¿Qué elemento?").then(() => {
+                    mostrarDebug('Toca el botón y pregunta por un elemento');
+                });
+            } else {
+                // Mantener el modo en confirmación
+                hablar("Di sí o no.").then(() => {
+                    mostrarDebug('Di "sí" o "no"');
+                });
+            }
         }
 
         // =============================================================================
@@ -851,7 +1261,6 @@
 
             // 3. Búsqueda por coincidencia parcial en nombres de elementos
             for (const clave of Object.keys(ELEMENTOS)) {
-                // Coincidencia exacta de palabra
                 const re = new RegExp(`\\b${clave}\\b`, 'i');
                 if (re.test(fraseLimpia)) {
                     return { clave, data: ELEMENTOS[clave] };
@@ -860,9 +1269,7 @@
 
             // 4. Búsqueda más flexible - coincidencia parcial
             for (const clave of Object.keys(ELEMENTOS)) {
-                // Si la frase contiene el elemento o viceversa
                 if (fraseLimpia.includes(clave) || clave.includes(fraseLimpia)) {
-                    // Solo si la coincidencia es significativa (más del 50% del nombre) - Reducido de 60% a 50%
                     const coincidencia = Math.max(
                         fraseLimpia.length / clave.length,
                         clave.length / fraseLimpia.length
@@ -873,7 +1280,7 @@
                 }
             }
 
-            // 5. Búsqueda por distancia de Levenshtein (similitud de cadenas)
+            // 5. Búsqueda por distancia de Levenshtein
             let mejorCoincidencia = null;
             let menorDistancia = Infinity;
             
@@ -882,7 +1289,6 @@
                 const maxLen = Math.max(fraseLimpia.length, clave.length);
                 const similitud = 1 - (distancia / maxLen);
                 
-                // Si la similitud es mayor al 65% - Reducido de 70% a 65% para mejor reconocimiento
                 if (similitud > 0.65 && distancia < menorDistancia) {
                     menorDistancia = distancia;
                     mejorCoincidencia = { clave, data: ELEMENTOS[clave] };
@@ -892,7 +1298,6 @@
             return mejorCoincidencia;
         }
 
-        // Función para calcular distancia de Levenshtein (similitud entre cadenas)
         function levenshteinDistance(str1, str2) {
             const matrix = [];
             
@@ -948,74 +1353,17 @@
             `;
             mostrarGloboInfo(htmlInfo);
             
-            // Mensaje más conciso
             hablar(`${capitalizar(clave)} es ${el.quechua} en quechua.`).then(() => {
+                // CAMBIO CRÍTICO: Asegurar que el modo cambie correctamente
                 modo = "confirmarOtro";
-                hablar("¿Otro elemento? Di sí o no.") // Mensaje más corto
-                    .then(() => escucharConfirmacion());
+                return hablar("¿Otro elemento? Di sí o no.");
+            }).then(() => {
+                mostrarDebug('Di "sí" para otro elemento o "no" para terminar');
+                // No iniciar automáticamente en móvil
+                if (!esMobile) {
+                    escucharConfirmacion();
+                }
             });
-        }
-
-        function escucharConfirmacion() {
-            const rec = crearRecon();
-            
-            let timeoutId = null;
-            let ultimoResultado = "";
-
-            rec.onresult = (e) => {
-                if (timeoutId) clearTimeout(timeoutId);
-
-                const resultado = e.results[e.results.length - 1];
-                const transcript = resultado[0].transcript;
-                
-                if (resultado.isFinal) {
-                    procesarConfirmacion(transcript);
-                } else {
-                    ultimoResultado = transcript;
-                    timeoutId = setTimeout(() => {
-                        if (ultimoResultado.length > 1) {
-                            procesarConfirmacion(ultimoResultado);
-                        }
-                    }, 600); // Tiempo reducido para confirmación
-                }
-            };
-
-            function procesarConfirmacion(respuesta) {
-                estadoNormal();
-                const resp = normalizar(respuesta);
-                
-                const htmlDicho = `<div class="info-row"><span class="info-title">Dijiste:</span><span class="info-value">${respuesta}</span></div>`;
-                mostrarGloboInfo(htmlDicho);
-
-                if (/\bno\b/.test(resp)) {
-                    hablar("Aíwala Albertino Tupananchiskama .").then(()=> { // Mensaje más corto
-                        const htmlFinal = `<div class="info-row"><span class="info-title">👋 Hasta luego:</span><span class="info-value"><b>Tupananchiskama</b></span></div>`;
-                        mostrarGloboInfo(htmlFinal);
-                        sesionActiva = false;
-                        reactivarWakeWord();
-                    });
-                } else if (/\bsi\b/.test(resp) || /\bclaro\b/.test(resp) || /\bya\b/.test(resp) || /\bbueno\b/.test(resp)) {
-                    hablar("¿Qué elemento?").then(()=> escucharElemento()); // Mensaje más corto
-                } else {
-                    hablar("Di sí o no.").then(()=> escucharConfirmacion()); // Mensaje más corto
-                }
-            }
-
-            rec.onerror = () => {
-                estadoNormal();
-                const htmlErr = `<div class="info-err">❌ No entendí</div>`;
-                mostrarGloboInfo(htmlErr);
-                hablar("¿Otro elemento? Di sí o no.").then(()=> escucharConfirmacion());
-            };
-
-            rec.onspeechend = () => {
-                if (ultimoResultado && ultimoResultado.length > 1) {
-                    if (timeoutId) clearTimeout(timeoutId);
-                    procesarConfirmacion(ultimoResultado);
-                }
-            };
-
-            rec.start();
         }
 
         function capitalizar(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -1029,73 +1377,137 @@
             globoInfo.classList.remove('visible');
             setTimeout(() => {
                 globoInfo.innerHTML = '';
-            }, 300); // Reducido de 400ms a 300ms
+            }, 300);
         }
 
         // =============================================================================
-        // WAKE WORD OPTIMIZADO PARA MEJOR RESPUESTA
+        // EVENT LISTENERS MEJORADOS CON MANEJO DE ESTADO
         // =============================================================================
-        function iniciarWakeWord() {
-            if (!tieneAPI()) return;
-            if (wakeRec) return;
+        
+        btnIniciar.addEventListener('click', async () => {
+            // Reset completo del sistema
+            sesionActiva = false;
+            sistemaIniciado = false;
+            modo = "preguntarElemento";
+            intentosReconexion = 0;
+            tiempoEsperaReconexion = 1000;
+            
+            if (reconocimientoActual) {
+                try {
+                    reconocimientoActual.abort();
+                    reconocimientoActual = null;
+                } catch(e) {}
+            }
+            
+            // Forzar interacción de usuario para activar permisos
+            try {
+                // Crear un AudioContext temporalmente para activar audio en el navegador
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                await audioContext.close();
+            } catch (e) {
+                // Ignorar errores de AudioContext
+            }
+            
+            iniciarSistema();
+        });
 
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            wakeRec = new SR();
-            wakeRec.lang = "es-PE";
-            wakeRec.interimResults = true;  // Cambiado a true para detección más rápida
-            wakeRec.continuous = true;
-            wakeRec.maxAlternatives = 2;   // Añadido para mejor reconocimiento
-
-            wakeRec.onstart = () => {
-                estadoEscuchando();
-                ocultarGloboInfo();
-            };
-
-            wakeRec.onresult = (e) => {
-                const i = e.results.length - 1;
-                const original = e.results[i][0].transcript;
-                const tx = normalizar(original);
+        btnMic.addEventListener('click', async () => {
+            // Asegurar que tenemos permisos antes de cada uso
+            if (!sistemaIniciado) return;
+            
+            // Detener cualquier reconocimiento activo
+            if (reconocimientoActual) {
+                try {
+                    reconocimientoActual.abort();
+                    reconocimientoActual = null;
+                } catch(e) {}
+            }
+            
+            try {
+                // Verificar permisos de nuevo antes de usar
+                const tienePermisos = await solicitarPermisosMicrofono();
+                if (!tienePermisos) {
+                    const htmlErr = `<div class="info-err">Necesito permisos de micrófono. Permite el acceso y recarga la página.</div>`;
+                    mostrarGloboInfo(htmlErr);
+                    return;
+                }
                 
-                // DETECCIÓN MÁS FLEXIBLE DE LA PALABRA DE ACTIVACIÓN
-                if (!sesionActiva && (/\bluisa\b/.test(tx) || /luisa/.test(tx) || /luisita/.test(tx) || /luis/.test(tx))) {
-                    sesionActiva = true;
-                    try { wakeRec.stop(); } catch(e){}
-                    bienvenida();
+                // CAMBIO CRÍTICO: Verificar modo correctamente
+                console.log("Modo actual:", modo); // Debug
+                
+                if (modo === "preguntarElemento") {
+                    escucharElemento();
+                } else if (modo === "confirmarOtro") {
+                    escucharConfirmacion();
+                } else {
+                    // Fallback - resetear a modo inicial
+                    modo = "preguntarElemento";
+                    escucharElemento();
                 }
-            };
-
-            wakeRec.onend = () => {
-                if (!sesionActiva) {
-                    setTimeout(() => {
-                        try { wakeRec.start(); } catch(e){}
-                    }, 200); // Reducido de 300ms a 200ms
-                }
-            };
-
-            if (navigator.mediaDevices?.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(() => { try { wakeRec.start(); } catch(e){} })
-                    .catch(() => {
-                        console.log('Micrófono no disponible para wake word');
-                    });
-            } else {
-                try { wakeRec.start(); } catch(e){}
+            } catch (error) {
+                console.error('Error al usar micrófono:', error);
+                mostrarDebug('Error al acceder al micrófono. Recarga la página.');
             }
-        }
+        });
 
-        function reactivarWakeWord() {
-            if (wakeRec && !sesionActiva) {
-                setTimeout(() => { // Pequeña pausa antes de reactivar
-                    try { wakeRec.start(); } catch(e){}
-                }, 500);
+        // Prevenir zoom en dispositivos móviles al hacer doble tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
             }
-        }
+            lastTouchEnd = now;
+        }, false);
 
-        // Inicializar todo cuando se carga la página
+        // Cleanup al cerrar/recargar página
+        window.addEventListener('beforeunload', () => {
+            if (reconocimientoActual) {
+                try {
+                    reconocimientoActual.abort();
+                } catch(e) {}
+            }
+            speechSynthesis.cancel();
+        });
+
+        // Inicializar cuando se carga la página
         document.addEventListener('DOMContentLoaded', async () => {
-            await inicializarVoces();
-            iniciarWakeWord();
-            mostrarDebug("Sistema iniciado - Di 'Luisa' para comenzar");
+            mostrarDebug("Toca 'Iniciar Bot' para comenzar");
+            
+            // Detectar Brave de forma más precisa
+            if (navigator.brave) {
+                navigator.brave.isBrave().then((isBrave) => {
+                    if (isBrave) {
+                        esBrave = true;
+                        mostrarDebug('Brave detectado. Si hay problemas, desactiva el escudo de Brave para esta página');
+                    }
+                }).catch(() => {
+                    // Usar detección alternativa
+                    esBrave = navigator.userAgent.includes('Brave');
+                });
+            }
+            
+            // Detectar si la página se carga por HTTPS (necesario para micrófono)
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                mostrarDebug('Necesita conexión segura (HTTPS) para usar el micrófono');
+                const htmlWarning = `<div class="info-err">Para usar el micrófono necesitas abrir esta página con HTTPS</div>`;
+                mostrarGloboInfo(htmlWarning);
+            }
+            
+            // En móviles, mostrar instrucciones específicas
+            if (esMobile) {
+                btnMic.style.display = 'none';
+                setTimeout(() => {
+                    mostrarDebug('Móvil detectado. Toca "Iniciar Bot" para comenzar');
+                }, 2000);
+            }
+            
+            // Para Brave, mostrar instrucciones específicas
+            setTimeout(() => {
+                if (esBrave) {
+                    mostrarDebug('Brave detectado. Si hay problemas, desactiva el escudo de Brave para esta página');
+                }
+            }, 3000);
         });
 
     </script>
